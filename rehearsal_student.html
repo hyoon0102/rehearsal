@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>영어 발표와 토론 리허설</title>
 <meta name="description" content="Narrative Speech 4차시 리허설 — 녹화하고, 코치 피드백을 받고, 다시 해보는 학생용 스튜디오">
@@ -229,7 +230,8 @@ h1,h2,h3{margin:0;font-family:var(--serif);font-weight:700;letter-spacing:-.01em
 .timer small{font-family:var(--font);font-size:14px;color:var(--stage-muted);font-weight:500;margin-left:8px}
 .zone{flex:1;min-width:140px;max-width:360px}
 .zone .tr{height:8px;border:1px solid var(--ink);position:relative;overflow:hidden;background:var(--bg)}
-.zone .okz{position:absolute;top:0;bottom:0;left:60%;width:20%;background:var(--hl)}
+.zone .okz{position:absolute;top:0;bottom:0;left:66.67%;right:0;background:var(--ok-bg);border-left:2px solid var(--ok)}
+.timer.done small .left{color:var(--ok)}
 .zone .fill{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--ink);opacity:.85}
 .zone .zl{display:flex;justify-content:space-between;font-size:11px;color:var(--stage-muted);margin-top:5px}
 .secdots{display:flex;flex-wrap:wrap;border:1px solid var(--ink)}
@@ -662,7 +664,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
       <h1>영어 발표와 토론<br><span class="hl">말하기 수행평가 리허설</span></h1>
       <p class="desc">실전처럼 서 보고, 기록을 보고, 한 번 더. 카메라 앞에서 발표해 보세요. 끝나면 시간·속도·군말·구성·제스처를 바로 분석해 다음 연습에서 고칠 점을 알려줍니다.</p>
       <div class="pills">
-        <span class="pill"><i style="background:var(--s4)"></i>제한 2:00 · 1:30 이상</span>
+        <span class="pill"><i style="background:var(--s4)"></i>최소 2:00 이상</span>
         <span class="pill"><i style="background:var(--s1)"></i>5단계 이야기 구조</span>
         <span class="pill"><i style="background:var(--s0)"></i>영어 발표 · Chrome 권장</span>
       </div>
@@ -695,7 +697,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
     <div class="grid2">
       <section class="card" id="cam-card">
         <div class="card-h"><h2>카메라·마이크</h2><span class="meta" id="ready-n">0/3 준비됨</span></div>
-        <div class="cdown pre"><div class="cd-top"><span class="cd-l">리허설 타이머 · 제한 2:00 · 시작하면 줄어들어요</span><span class="cd-n num">2:00</span></div><div class="cd-bar"><i></i><b class="cd-mark" title="1:30"></b></div></div>
+        <div class="cdown pre"><div class="cd-top"><span class="cd-l">리허설 타이머 · 최소 2:00 이상 · 시간 제한은 없어요</span><span class="cd-n num">2:00+</span></div></div>
         <div class="cam">
           <video id="pv" autoplay muted playsinline></video>
           <div class="ph" id="pv-ph"><span>카메라가 꺼져 있어요</span><button class="btn sm" id="btn-cam">카메라·마이크 켜기</button></div>
@@ -762,8 +764,8 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
   <div class="stagewrap">
     <div class="stage" id="stage">
       <div class="sbar">
-        <div class="timer num" id="timer"><span id="timer-n">0:00</span><small>/ 제한 2:00<span class="left" id="timer-left">· 남은 2:00</span></small></div>
-        <div class="zone"><div class="tr"><div class="okz"></div><div class="fill" id="zone-fill"></div></div><div class="zl num"><span>0:00</span><span>1:30</span><span>2:30</span></div></div>
+        <div class="timer num" id="timer"><span id="timer-n">0:00</span><small>/ 최소 2:00<span class="left" id="timer-left">· 2:00까지 2:00</span></small></div>
+        <div class="zone"><div class="tr"><div class="okz"></div><div class="fill" id="zone-fill"></div></div><div class="zl num"><span>0:00</span><span>2:00</span><span>3:00</span></div></div>
         <div class="secdots" id="secdots"></div>
         <div class="mis-chip hidden" id="mis-chip"></div>
         <div class="rec"><i></i>REC</div>
@@ -836,7 +838,7 @@ const SECS = [
   {k:'결말 및 깨달음', en:'Resolution', hex:'var(--s4)', ph:'최종 결과, 배운 점, 나의 변화'},
 ];
 const FILLERS = new Set(['um','uh','uhm','er','erm','ah','hmm','mm','like']);
-const WPM_EST = 130, T_MIN = 90, T_MAX = 120, T_SCALE = 150;
+const WPM_EST = 130, T_MIN = 120, T_MAX = Infinity, T_SCALE = 180;   // 최소 2:00 이상, 상한 없음
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -1185,7 +1187,7 @@ async function beginRun(){
     html += `<span class="tok${mk.em?' em':''}" id="tk${i}">${esc(t.raw)}</span>${mk.pz ? `<span class="pz">${mk.pz}</span>` : ''} `;
   });
   $('#scriptbox').innerHTML = html + '</div>';
-  $('#live').textContent=''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 남은 2:00'; $('#timer').classList.remove('warn','over'); $('#zone-fill').style.width='0';
+  $('#live').textContent=''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
   $('#cd-n').textContent = fmt(T_MAX); $('#cd-fill').style.width = '100%'; $('#cdown').classList.remove('warn','over'); $('#cdown .cd-l').textContent = '남은 시간 · 제한 2:00 · 1:30 이상 말하기';
   $('#stage').classList.toggle('m2', curMode()===2); R0ns(); setTimeout(()=>showSpg(0), 30); setTimeout(()=>showSpg(S.run.viewSec||0), 400);
   slideIdx=0; showSlide(0); renderSecDots(0); showView('stage');
@@ -1236,7 +1238,7 @@ async function beginRun(){
   R.timer = setInterval(()=>{
     const t=(performance.now()-R.t0)/1000;
     $('#timer-n').textContent = fmt(t);
-    { const lf = T_MAX - t, tm = $('#timer'); $('#timer-left').textContent = lf >= 0 ? '· 남은 ' + fmt(Math.ceil(lf)) : '· ' + fmt(-lf) + ' 초과'; tm.classList.toggle('warn', lf <= 15 && lf >= 0); tm.classList.toggle('over', lf < 0); }
+    { const lf = T_MIN - t, tm = $('#timer'); $('#timer-left').textContent = lf > 0 ? '· 2:00까지 ' + fmt(Math.ceil(lf)) : '· 2:00 달성 ✓'; tm.classList.toggle('done', lf <= 0); }
     $('#zone-fill').style.width = Math.min(100, t/T_SCALE*100)+'%';
     const left = T_MAX - t, cd = $('#cdown');
     $('#cd-n').textContent = left >= 0 ? fmt(Math.ceil(left)) : '+' + fmt(-left);
@@ -1368,7 +1370,7 @@ function finalize(R){
     `대본의 ${Math.round(A.coverage*100)}%를 전달했어요. 가장 많이 빠진 단계는 <b>${SECS[worstSec].k}</b>예요. 이 단계만 소리 내어 세 번 읽어보세요.`,
     `군말 ${A.fillers}회, 가장 긴 멈춤 ${A.longest.toFixed(1)}초. 막힐 때 "um" 대신 <b>1초 침묵</b>하고 다음 문장 첫 단어만 떠올리세요.`,
     A.wpm<110 ? `분당 ${Math.round(A.wpm)}단어로 느린 편이에요. 문장 사이 쉼은 유지하고 <b>문장 안에서는 끊지 말고</b> 이어서 말해보세요.` : `분당 ${Math.round(A.wpm)}단어로 빠른 편이에요. 단계가 바뀔 때마다 <b>숨 한 번</b> 쉬는 자리를 대본에 표시하세요.`,
-    A.dur<T_MIN ? `${fmt(A.dur)}로 목표보다 ${Math.round(T_MIN-A.dur)}초 짧아요. <b>절정</b>에 그때의 감정을 한 문장 더 넣어보세요.` : `${fmt(A.dur)}로 목표보다 ${Math.round(A.dur-T_MAX)}초 길어요. <b>도입</b>의 배경 설명을 한 문장 줄여보세요.`,
+    A.dur<T_MIN ? `${fmt(A.dur)}로 목표보다 ${Math.round(T_MIN-A.dur)}초 짧아요. <b>절정</b>에 그때의 감정을 한 문장 더 넣어보세요.` : `${fmt(A.dur)}로 2:00을 넘겼어요. 시간은 충분해요. <b>도입</b>의 배경 설명을 한 문장 줄여보세요.`,
     A.gaze ? `카메라를 본 시간이 ${gp}%이고, 아래를 본 시간이 ${Math.round(A.gaze.down*100)}%예요. 대본은 <b>문장 첫 단어만 보고 고개를 들어</b> 카메라에 말을 걸어보세요.` : `목소리 높낮이 변화가 적어요. 단계마다 <b>강조할 단어 하나</b>를 정해 조금 더 크게 말해보세요.`,
     `${A.motionDesc}. 절정과 깨달음에서 <b>손을 한 번 펴서</b> 보여주는 제스처를 넣어보세요.`
   ];
@@ -1422,7 +1424,7 @@ function finalize(R){
     <div class="brief key" style="margin-bottom:0"><span class="brief-t"><b>가장 먼저 고칠 한 가지 · ${axes[first]}</b><br>${tips[first]}</span></div>
 
     <div class="rgrid">
-      <div class="card mc"><div class="l">발표 시간</div><div class="v num">${fmt(A.dur)}${timeTag}</div><div class="s">목표 1:30 – 2:00</div></div>
+      <div class="card mc"><div class="l">발표 시간</div><div class="v num">${fmt(A.dur)}${timeTag}</div><div class="s">목표 2:00 이상</div></div>
       <div class="card mc"><div class="l">발화 속도</div><div class="v num">${Math.round(A.wpm)}<small>단어/분</small>${wpmTag}</div><div class="s">듣기 편한 속도 120 – 140</div></div>
       <div class="card mc"><div class="l">군말</div><div class="v num">${A.fillers}<small>회</small>${fillTag}</div><div class="s">1.5초 이상 멈춤 ${A.pauses}번 · 최장 ${A.longest.toFixed(1)}초</div></div>
       <div class="card mc"><div class="l">시선 정면</div><div class="v num">${A.gaze ? gp+'<small>%</small>'+(gp>=70?'<span class="tag g">좋음</span>':'<span class="tag a">연습</span>') : '—'}</div><div class="s">${A.gaze ? '아래 '+Math.round(A.gaze.down*100)+'% · 옆 '+Math.round(A.gaze.side*100)+'% · 미소 '+Math.round(A.gaze.smile*100)+'%' : '시선 분석을 불러오지 못했어요'}</div></div>
@@ -1649,7 +1651,7 @@ function renderPolish(){
       <label class="marks-tg"><input type="checkbox" id="marks-on" ${useMarks()?'checked':''}>무대 화면에 끊어 읽기 · 강조 표시</label>
       <button class="btn sec sm" id="pol-undo" ${UNDO.length?'':'disabled'}>되돌리기</button><button class="btn sec sm" id="pol-close">닫기</button></div>
     <div class="coach-sum">
-      <div><b>예상 시간</b>${tot} 단어 · 약 ${fmt(tot/WPM_EST*60)} ${tot/WPM_EST*60 < T_MIN ? '(목표보다 짧아요)' : tot/WPM_EST*60 > T_MAX ? '(목표보다 길어요)' : '(목표 안)'}</div>
+      <div><b>예상 시간</b>${tot} 단어 · 약 ${fmt(tot/WPM_EST*60)} ${tot/WPM_EST*60 < T_MIN ? '(2:00보다 짧아요 · 조금 더 써요)' : '(2:00 이상 · 좋아요)'}</div>
       <div><b>가장 긴 문장</b>${longest} 단어 ${longest>22 ? '· 둘로 나누면 말하기 쉬워져요' : '· 좋아요'}</div>
       <div><b>손볼 곳</b>${n}곳 · 위에서부터 하나씩</div>
     </div>
@@ -1753,7 +1755,7 @@ function buildReportData(R, A){
   SECS.forEach((s,i)=>lines.push(`[${i+1}. ${s.en}] ${S.sections[i].trim() || '(empty)'}`));
   lines.push('', 'TRANSCRIPT (speech recognition):', R.heard.map(h=>h.raw).join(' ') || '(nothing recognized)');
   lines.push('', 'METRICS:',
-    `duration ${m(A.dur)} (target 1:30–2:00); words recognized ${R.heard.length}; speaking rate ${Math.round(A.wpm)} wpm (comfortable 120–140)`,
+    `duration ${m(A.dur)} (target: at least 2:00, no upper limit); words recognized ${R.heard.length}; speaking rate ${Math.round(A.wpm)} wpm (comfortable 120–140)`,
     `script coverage ${Math.round(A.coverage*100)}%; filler words ${A.fillers}`,
     `hint button used ${(R.hints||[]).length} times${(R.hints||[]).length ? ' at '+R.hints.map(h=>m(h.t)).join(', ') : ''} (no-script rehearsal: shows the next 3 words)`,
     `pauses of 1.5s or more: ${A.pauseList.length ? A.pauseList.map(p=>`${m(p.at)} (${p.d.toFixed(1)}s)`).join(', ') : 'none'}`,
@@ -1828,7 +1830,7 @@ function makeMission(axis, r, A){
   if (axis===0) { const t = Math.min(95, Math.max(80, r.cov + 10)); return { key:'cov', target:t, text:`대본 전달률 ${t}% 이상` }; }
   if (axis===1) { const t = Math.max(1, r.fillers - 2); return { key:'fillers', target:t, text:`군말 ${t}회 이하, 2초 넘는 멈춤 없이` }; }
   if (axis===2) return { key:'wpm', target:[115,140], text:'말하기 속도 분당 115~140단어' };
-  if (axis===3) return { key:'dur', target:[T_MIN,T_MAX], text:'발표 시간 1:30~2:00 안에 마치기' };
+  if (axis===3) return { key:'dur', target:[T_MIN,T_MAX], text:'발표 시간 2:00 이상 채우기' };
   if (axis===4 && r.front!=='') { const t = Math.min(85, Math.max(70, r.front + 15)); return { key:'front', target:t, text:`카메라 보는 시간 ${t}% 이상` }; }
   return { key:'motion', target:null, text:'절정과 깨달음에서 손짓 한 번씩 넣기' };
 }
@@ -1847,7 +1849,7 @@ function growthCard(p, n, mc){
     return `<div><div class="l">${label}</div><div class="v num">${fmtv(b)}<small>← ${fmtv(a)}</small><span class="dl ${cls}">${sign} ${fmtv===fmt ? Math.abs(d)+'초' : fmtv(+Math.abs(d).toFixed(1))}</span></div></div>`;
   };
   const id = x => x, pc = x => x + '%', sec = x => x + '초';
-  const cells = [row('발표 시간', p.dur, n.dur, (T_MIN+T_MAX)/2, fmt), row('속도', p.wpm, n.wpm, 128, id), row('대본 전달률', p.cov, n.cov, 'up', pc),
+  const cells = [row('발표 시간', p.dur, n.dur, 'up', fmt), row('속도', p.wpm, n.wpm, 128, id), row('대본 전달률', p.cov, n.cov, 'up', pc),
     row('군말', p.fillers, n.fillers, 'down', id), row('최장 멈춤(초)', p.longest, n.longest, 'down', x=>(+x).toFixed(1)), row('시선 정면', p.front, n.front, 'up', pc)].join('');
   const mis = p.mission ? (mc ? `<div class="misres"><span class="stamp ${mc.ok?'ok':'no'}">${mc.ok?'미션 달성':'다시 도전'}</span><p><b>지난 미션</b> ${esc(p.mission.text)} → 이번 ${esc(mc.now)}</p></div>`
     : `<div class="misres"><span class="stamp no">셀프 체크</span><p><b>지난 미션</b> ${esc(p.mission.text)} · 녹화 영상으로 직접 확인해 보세요</p></div>`) : '';
