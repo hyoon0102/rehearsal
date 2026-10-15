@@ -1017,6 +1017,14 @@ function stopMedia(){
 $('#btn-cam').addEventListener('click', startMedia);
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+/* 패드 판별 · 패드는 실시간 음성 인식 대신 '녹음 → 발표 후 선생님 서버에서 글자로' 방식을 써요
+   (아이패드: 카메라와 음성 인식이 마이크를 같이 못 씀 · 아이패드 크롬/삼성 인터넷: 음성 인식 없음 · 학교 와이파이가 구글 음성 서버를 막는 경우) */
+const IS_ANDROID = /Android/i.test(navigator.userAgent);
+const IS_IOS = /iPad|iPhone|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_SAMSUNG = /SamsungBrowser/i.test(navigator.userAgent);
+const IS_TABLET = IS_ANDROID || IS_IOS;
+const FORCE_SERVER_STT = true;   // true: 모든 패드가 서버 전사 사용(가장 안정) · false: 갤패드 크롬은 실시간 인식 시도
+const NO_LIVE_SR = !SR || IS_IOS || IS_SAMSUNG || (FORCE_SERVER_STT && IS_TABLET);
 /* 기기 안 시선·표정 분석 (MediaPipe Face Landmarker, 영상은 외부로 나가지 않음) */
 const MP = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 const FACE = { lm:null, loading:null, failed:false };
@@ -1082,7 +1090,7 @@ function updateChecks(){
     { ok: stu().full, t:'응시자 정보', d: stu().full ? stuLabel() : '클래스·반·번호·이름 입력 필요' },
     { ok: true, t:'스크립트', d: tot>=10 ? `${tot}단어 · 예상 ${fmt(tot/WPM_EST*60)}` : '없어도 돼요 · 자유 발화로 리허설해요' },
     { ok: !!S.stream, t:'카메라·마이크', d: S.stream ? '연결됨' : '권한 허용 필요' },
-    { ok: !!SR, t:'음성 인식', d: SR ? '사용 가능' : 'Chrome에서 열어주세요' },
+    { ok: !!SR || NO_LIVE_SR, t:'음성 인식', d: NO_LIVE_SR ? '패드 · 발표가 끝나면 녹음을 선생님 서버에서 글자로 바꿔요' : SR ? '사용 가능' : 'Chrome에서 열어주세요' },
     { ok: !!FACE.lm, t:'시선·표정·손동작 분석', d: FACE.lm ? (POSE.lm ? '기기 안에서 준비됨 · 손동작 포함' : POSE.failed ? '시선·표정 준비됨 · 손동작은 불러오지 못함' : '시선·표정 준비됨 · 손동작 불러오는 중') : FACE.failed ? '불러오지 못함 · 없이도 진행 가능' : FACE.loading ? '불러오는 중…' : '카메라를 켜면 준비돼요' },
   ];
   $('#checks').innerHTML = items.map(i=>`<div class="ck ${i.ok?'ok':''}"><span class="s">${i.ok?'✓':''}</span><span class="t">${i.t}</span><span class="d">${i.d}</span></div>`).join('');
@@ -1187,7 +1195,7 @@ async function beginRun(){
     html += `<span class="tok${mk.em?' em':''}" id="tk${i}">${esc(t.raw)}</span>${mk.pz ? `<span class="pz">${mk.pz}</span>` : ''} `;
   });
   $('#scriptbox').innerHTML = toks.length ? html + '</div>' : '<div class="spg on" style="color:var(--stage-muted);font-size:20px;line-height:1.7"><b style="color:var(--stage-text)">자유 발화 리허설</b><br>대본 없이 내 말로 이야기해요.<br>도입 → 사건의 전개 → 절정 → 사건의 마무리 → 결말 및 깨달음 순서만 떠올려요.</div>';
-  $('#live').textContent= IS_ANDROID ? '패드 모드 · 말하는 내용을 실시간으로 인식해요 (영상에는 소리가 저장되지 않아요)' : ''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
+  $('#live').textContent= NO_LIVE_SR ? '패드 모드 · 발표가 끝나면 녹음을 글자로 바꿔요 (대본 넘기기는 ‹ › 버튼이나 스와이프)' : IS_ANDROID ? '패드 모드 · 말하는 내용을 실시간으로 인식해요 (영상에는 소리가 저장되지 않아요)' : ''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
   $('#cd-n').textContent = fmt(T_MAX); $('#cd-fill').style.width = '100%'; $('#cdown').classList.remove('warn','over'); $('#cdown .cd-l').textContent = '남은 시간 · 제한 2:00 · 1:30 이상 말하기';
   $('#stage').classList.toggle('m2', curMode()===2); R0ns(); setTimeout(()=>showSpg(0), 30); setTimeout(()=>showSpg(S.run.viewSec||0), 400);
   slideIdx=0; showSlide(0); renderSecDots(0); showView('stage');
@@ -1199,11 +1207,14 @@ async function beginRun(){
   const R = S.run; R.active = true; R.t0 = performance.now();
 
   try {
-    // 안드로이드 패드: 마이크를 음성 인식에 넘겨줘요 (녹화는 영상만 · 소리는 글자로 기록)
-    if (IS_ANDROID && SR) S.stream.getAudioTracks().forEach(t => { t.stop(); S.stream.removeTrack(t); });
+    // 안드로이드 패드에서 실시간 인식을 쓸 때만 마이크를 음성 인식에 넘겨줘요 (서버 전사 모드에서는 마이크를 그대로 녹음에 써요)
+    const useLive = !!SR && !NO_LIVE_SR;
+    if (IS_ANDROID && useLive) S.stream.getAudioTracks().forEach(t => { t.stop(); S.stream.removeTrack(t); });
     R.srT = [];
+    // 패드는 영상 녹화와 소리 녹음을 분리해요 (아이패드에서 녹화기 두 개가 같은 마이크를 잡으면 꼬여요)
+    const recStream = IS_TABLET ? new MediaStream(S.stream.getVideoTracks()) : S.stream;
     const mime = ['video/webm;codecs=vp9,opus','video/webm','video/mp4'].find(m=>MediaRecorder.isTypeSupported(m));
-    R.rec = new MediaRecorder(S.stream, mime ? {mimeType:mime} : undefined);
+    R.rec = new MediaRecorder(recStream, mime ? {mimeType:mime} : undefined);
     R.rec.ondataavailable = e => { if (e.data.size) R.chunks.push(e.data); };
     R.rec.start(500);
     // 소리만 따로 녹음 (안드로이드 패드처럼 실시간 음성 인식이 안 되는 기기용 · 끝나면 서버에서 글자로 바꿔요)
@@ -1222,7 +1233,7 @@ async function beginRun(){
     if (POSE.lm && R.pt % 2 === 0) { try { R.pose.push(readPose(v, (performance.now()-R.t0)/1000)); } catch(e) {} }
   }, 200);
 
-  if (SR) {
+  if (SR && !NO_LIVE_SR) {
     const rg = new SR(); rg.lang='en-US'; rg.continuous=true; rg.interimResults=true; let base=0;
     rg.onerror = e => {
       const msg = { 'not-allowed':'마이크 권한이 막혀 있어요 · 주소창 왼쪽 자물쇠에서 마이크 허용', 'service-not-allowed':'이 브라우저에서 음성 인식이 막혀 있어요 · 크롬으로 열어주세요', 'network':'음성 인식 서버에 연결이 안 돼요 · 학교 와이파이가 막고 있을 수 있어요', 'audio-capture':'마이크를 찾지 못했어요 · 마이크 연결을 확인해요' }[e.error];
@@ -1279,8 +1290,9 @@ async function stopRun(){
   for (const m of msgs){ T.textContent=m; await new Promise(r=>setTimeout(r,700)); }
   const aDone = new Promise(res=>{ if (R.arec && R.arec.state!=='inactive') { R.arec.onstop=()=>res(); R.arec.stop(); } else res(); });
   await recDone; await aDone; stopMedia();
-  if (IS_ANDROID && SR) androidRms(R);
+  if (IS_ANDROID && SR && !NO_LIVE_SR) androidRms(R);
   if (R.heard.length < 5 && R.achunks && R.achunks.length) await serverTranscribe(R, T);
+  else if (R.heard.length < 5 && NO_LIVE_SR) toast('녹음이 비어 있어요 · 마이크 권한과 선생님 서버 연결을 확인해 주세요');
   L.classList.remove('show');
   finalize(R);
 }
@@ -1488,7 +1500,7 @@ function finalize(R){
     <div class="ractions">
       <button class="btn big" id="again">같은 대본으로 다시</button>
       <button class="btn sec big" id="edit">대본 고치기</button>
-      ${R.videoUrl ? `<a class="btn sec big" href="${R.videoUrl}" download="rehearsal_${S.history.length}.webm">영상 저장</a>` : ''}
+      ${R.videoUrl ? `<a class="btn sec big" href="${R.videoUrl}" download="rehearsal_${S.history.length}.${(R.rec && /mp4/.test(R.rec.mimeType||'')) ? 'mp4' : 'webm'}">영상 저장</a>` : ''}
       <button class="btn sec big" onclick="window.print()">PDF 저장</button>
     </div>`;
   $('#again').onclick = ()=>beginRun();
@@ -2217,7 +2229,7 @@ $('#beats').addEventListener('click', e=>{
 });
 
 /* ===== 안드로이드 패드: 실시간 음성 인식 대신, 발표가 끝나면 녹음을 서버에서 글자로 바꿔요 ===== */
-const IS_ANDROID = /Android/i.test(navigator.userAgent), NO_LIVE_SR = false;
+// IS_ANDROID · IS_IOS · NO_LIVE_SR 은 위쪽(SR 선언 바로 아래)에서 정해요
 // 패드는 소리 크기를 못 재니까, 음성 인식 결과가 들어온 시각으로 '말한 구간'과 멈춤을 계산해요
 function androidRms(R){ const ts = R.srT || [], out = []; let k = 0; for (let t = 0; t < R.duration; t += 0.1) { while (k < ts.length && ts[k] < t - 0.7) k++; const on = k < ts.length && Math.abs(ts[k] - t) <= 0.7; out.push({ t, v: on ? 0.05 : 0.001 }); } R.rms = out; }
 function blobToB64(b){ return new Promise((res,rej)=>{ const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = rej; r.readAsDataURL(b); }); }
