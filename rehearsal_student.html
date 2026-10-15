@@ -1080,7 +1080,7 @@ function updateChecks(){
   const tot = totalWords();
   const items = [
     { ok: stu().full, t:'응시자 정보', d: stu().full ? stuLabel() : '클래스·반·번호·이름 입력 필요' },
-    { ok: tot>=20, t:'스크립트', d: tot ? `${tot}단어 · 예상 ${fmt(tot/WPM_EST*60)}` : '20단어 이상 필요' },
+    { ok: true, t:'스크립트', d: tot>=10 ? `${tot}단어 · 예상 ${fmt(tot/WPM_EST*60)}` : '없어도 돼요 · 자유 발화로 리허설해요' },
     { ok: !!S.stream, t:'카메라·마이크', d: S.stream ? '연결됨' : '권한 허용 필요' },
     { ok: !!SR, t:'음성 인식', d: SR ? '사용 가능' : 'Chrome에서 열어주세요' },
     { ok: !!FACE.lm, t:'시선·표정·손동작 분석', d: FACE.lm ? (POSE.lm ? '기기 안에서 준비됨 · 손동작 포함' : POSE.failed ? '시선·표정 준비됨 · 손동작은 불러오지 못함' : '시선·표정 준비됨 · 손동작 불러오는 중') : FACE.failed ? '불러오지 못함 · 없이도 진행 가능' : FACE.loading ? '불러오는 중…' : '카메라를 켜면 준비돼요' },
@@ -1176,9 +1176,9 @@ async function beginRun(){
   if (!stu().full) { showView('ready'); $('.ticket').scrollIntoView({behavior:'smooth',block:'center'}); toast('클래스와 반·번호·이름을 먼저 입력해 주세요'); return; }
   readSections();
   if (!(await startMedia())) return;
-  const toks = buildTokens();
-  if (toks.length < 10) { toast('대본을 조금 더 길게 써 주세요'); return; }
-  S.run = { active:false, t0:0, toks, segs:[], heard:[], st:new Array(toks.length).fill(0), p:0, curSec:0, rms:[], motion:[], gaze:[], secT:[0], chunks:[], videoUrl:null, hints:[], pose:[] };
+  const free = buildTokens().length < 10, toks = free ? [] : buildTokens();   // 대본이 없으면 자유 발화 리허설
+  if (free) toast('대본 없이 자유 발화로 리허설해요');
+  S.run = { free, active:false, t0:0, toks, segs:[], heard:[], st:new Array(toks.length).fill(0), p:0, curSec:0, rms:[], motion:[], gaze:[], secT:[0], chunks:[], videoUrl:null, hints:[], pose:[] };
   hintReset();
   let html='', last=-1;
   toks.forEach((t,i)=>{
@@ -1186,8 +1186,8 @@ async function beginRun(){
     const mk = useMarks() ? markOf(toks, i) : {}; t.em = !!mk.em;
     html += `<span class="tok${mk.em?' em':''}" id="tk${i}">${esc(t.raw)}</span>${mk.pz ? `<span class="pz">${mk.pz}</span>` : ''} `;
   });
-  $('#scriptbox').innerHTML = html + '</div>';
-  $('#live').textContent=''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
+  $('#scriptbox').innerHTML = toks.length ? html + '</div>' : '<div class="spg on" style="color:var(--stage-muted);font-size:20px;line-height:1.7"><b style="color:var(--stage-text)">자유 발화 리허설</b><br>대본 없이 내 말로 이야기해요.<br>도입 → 사건의 전개 → 절정 → 사건의 마무리 → 결말 및 깨달음 순서만 떠올려요.</div>';
+  $('#live').textContent= IS_ANDROID ? '패드 모드 · 말하는 내용을 실시간으로 인식해요 (영상에는 소리가 저장되지 않아요)' : ''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
   $('#cd-n').textContent = fmt(T_MAX); $('#cd-fill').style.width = '100%'; $('#cdown').classList.remove('warn','over'); $('#cdown .cd-l').textContent = '남은 시간 · 제한 2:00 · 1:30 이상 말하기';
   $('#stage').classList.toggle('m2', curMode()===2); R0ns(); setTimeout(()=>showSpg(0), 30); setTimeout(()=>showSpg(S.run.viewSec||0), 400);
   slideIdx=0; showSlide(0); renderSecDots(0); showView('stage');
@@ -1199,10 +1199,16 @@ async function beginRun(){
   const R = S.run; R.active = true; R.t0 = performance.now();
 
   try {
+    // 안드로이드 패드: 마이크를 음성 인식에 넘겨줘요 (녹화는 영상만 · 소리는 글자로 기록)
+    if (IS_ANDROID && SR) S.stream.getAudioTracks().forEach(t => { t.stop(); S.stream.removeTrack(t); });
+    R.srT = [];
     const mime = ['video/webm;codecs=vp9,opus','video/webm','video/mp4'].find(m=>MediaRecorder.isTypeSupported(m));
     R.rec = new MediaRecorder(S.stream, mime ? {mimeType:mime} : undefined);
     R.rec.ondataavailable = e => { if (e.data.size) R.chunks.push(e.data); };
     R.rec.start(500);
+    // 소리만 따로 녹음 (안드로이드 패드처럼 실시간 음성 인식이 안 되는 기기용 · 끝나면 서버에서 글자로 바꿔요)
+    R.achunks = [];
+    try { if (!S.stream.getAudioTracks().length) throw 0; const am = ['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(m=>MediaRecorder.isTypeSupported(m)); R.arec = new MediaRecorder(new MediaStream(S.stream.getAudioTracks()), am ? {mimeType:am, audioBitsPerSecond:32000} : undefined); R.arec.ondataavailable = e => { if (e.data.size) R.achunks.push(e.data); }; R.arec.start(1000); } catch(e) { R.arec = null; }
   } catch(e) {}
 
   const ctx = $('#motion-canvas').getContext('2d', {willReadFrequently:true}); let prev=null;
@@ -1223,7 +1229,7 @@ async function beginRun(){
       if (msg) { R.srErr = e.error; $('#live').innerHTML = '<b style="color:var(--bad)">음성 인식 안 됨</b> · ' + msg; toast(msg); }
     };
     rg.onresult = ev => {
-      const now=(performance.now()-R.t0)/1000;
+      const now=(performance.now()-R.t0)/1000; R.srT.push(now);
       for (let i=ev.resultIndex;i<ev.results.length;i++){
         const txt = ev.results[i][0].transcript.trim();
         const seg = R.segs[base+i] || (R.segs[base+i] = {t0:now, words:[]});
@@ -1271,7 +1277,11 @@ async function stopRun(){
   });
   const msgs=['발화를 분석하고 있어요','대본과 실제 발화를 맞춰보는 중','속도·멈춤·제스처를 계산하는 중'];
   for (const m of msgs){ T.textContent=m; await new Promise(r=>setTimeout(r,700)); }
-  await recDone; stopMedia(); L.classList.remove('show');
+  const aDone = new Promise(res=>{ if (R.arec && R.arec.state!=='inactive') { R.arec.onstop=()=>res(); R.arec.stop(); } else res(); });
+  await recDone; await aDone; stopMedia();
+  if (IS_ANDROID && SR) androidRms(R);
+  if (R.heard.length < 5 && R.achunks && R.achunks.length) await serverTranscribe(R, T);
+  L.classList.remove('show');
   finalize(R);
 }
 $('#btn-fs').addEventListener('click', toggleFs);
@@ -1294,7 +1304,7 @@ document.addEventListener('keydown', e=>{
 /* analysis */
 function analyze(R){
   const dur=R.duration, n=R.toks.length;
-  const coverage = n ? R.st.filter(s=>s===1).length/n : 0;
+  const coverage = n ? R.st.filter(s=>s===1).length/n : null;   // null = 대본 없이 자유 발화
   const wpm = dur>0 ? R.heard.length/(dur/60) : 0;
   const fillers = R.heard.filter(h=>FILLERS.has(h.n)).length;
   let maxv=0; R.rms.forEach(x=>maxv=Math.max(maxv,x.v));
@@ -1358,7 +1368,7 @@ function finalize(R){
   const axes = ['내용 전달','유창성','발화 속도','시간 준수', A.gaze ? '시선' : '목소리','제스처'];
   const gp = A.gaze ? Math.round(A.gaze.front*100) : 0;
   const sc = [
-    Math.min(1, A.coverage+.05),
+    A.coverage==null ? 1 : Math.min(1, A.coverage+.05),
     Math.max(.15, 1-(A.fillers*.05 + Math.min(A.longest,6)*.08)),
     Math.max(.1, 1-Math.min(1, Math.abs(128-A.wpm)/90)),
     A.dur>=T_MIN && A.dur<=T_MAX ? 1 : A.dur<T_MIN ? A.dur/T_MIN : T_MAX/A.dur,
@@ -1367,7 +1377,7 @@ function finalize(R){
   ];
   const worstSec = A.secMiss.indexOf(Math.max(...A.secMiss));
   const tips = [
-    `대본의 ${Math.round(A.coverage*100)}%를 전달했어요. 가장 많이 빠진 단계는 <b>${SECS[worstSec].k}</b>예요. 이 단계만 소리 내어 세 번 읽어보세요.`,
+    A.coverage==null ? '대본 없이 자유 발화로 했어요. 다음엔 다섯 단계 순서를 지키며 말해 보세요.' : `대본의 ${Math.round(A.coverage*100)}%를 전달했어요. 가장 많이 빠진 단계는 <b>${SECS[worstSec].k}</b>예요. 이 단계만 소리 내어 세 번 읽어보세요.`,
     `군말 ${A.fillers}회, 가장 긴 멈춤 ${A.longest.toFixed(1)}초. 막힐 때 "um" 대신 <b>1초 침묵</b>하고 다음 문장 첫 단어만 떠올리세요.`,
     A.wpm<110 ? `분당 ${Math.round(A.wpm)}단어로 느린 편이에요. 문장 사이 쉼은 유지하고 <b>문장 안에서는 끊지 말고</b> 이어서 말해보세요.` : `분당 ${Math.round(A.wpm)}단어로 빠른 편이에요. 단계가 바뀔 때마다 <b>숨 한 번</b> 쉬는 자리를 대본에 표시하세요.`,
     A.dur<T_MIN ? `${fmt(A.dur)}로 목표보다 ${Math.round(T_MIN-A.dur)}초 짧아요. <b>절정</b>에 그때의 감정을 한 문장 더 넣어보세요.` : `${fmt(A.dur)}로 2:00을 넘겼어요. 시간은 충분해요. <b>도입</b>의 배경 설명을 한 문장 줄여보세요.`,
@@ -1381,7 +1391,7 @@ function finalize(R){
   const items = [];
   const best = order[order.length-1][1];
   const praise = [
-    `대본의 ${Math.round(A.coverage*100)}%를 빠짐없이 전달했어요. 준비가 탄탄했다는 뜻이에요.`,
+    A.coverage==null ? '대본 없이 내 말로 끝까지 이야기를 이어갔어요.' : `대본의 ${Math.round(A.coverage*100)}%를 빠짐없이 전달했어요. 준비가 탄탄했다는 뜻이에요.`,
     `군말이 ${A.fillers}회뿐이에요. 막힘 없이 이어서 말했어요.`,
     `분당 ${Math.round(A.wpm)}단어, 듣기 편한 속도였어요.`,
     `${fmt(A.dur)}로 목표 시간 안에 정확히 마쳤어요.`,
@@ -1389,7 +1399,7 @@ function finalize(R){
     `${A.motionDesc}. 몸짓이 이야기를 도왔어요.`
   ];
   items.push({c:'var(--ok)', h:`잘한 점 · ${axes[best]}`, p:praise[best]});
-  if (A.coverage<.8 && A.wpm>100 && A.longest<3) items.push({c:'var(--ok)', h:'잘한 점 · 유연한 대처', p:'대본과 다르게 말한 부분이 있었지만 멈추지 않고 <b>자기 말로 문장을 완성</b>했어요. 외운 문장보다 이게 진짜 말하기 실력이에요.'});
+  if (A.coverage!=null && A.coverage<.8 && A.wpm>100 && A.longest<3) items.push({c:'var(--ok)', h:'잘한 점 · 유연한 대처', p:'대본과 다르게 말한 부분이 있었지만 멈추지 않고 <b>자기 말로 문장을 완성</b>했어요. 외운 문장보다 이게 진짜 말하기 실력이에요.'});
   items.push({c:'var(--warn)', h:`다음에 고칠 점 · ${axes[order[1][1]]}`, p:tips[order[1][1]]});
   items.push({c:'var(--blue)', h:'시선·표정', p:'시선과 표정은 화면으로 직접 확인하는 게 가장 정확해요. 아래 녹화 영상을 보며 체크리스트를 확인하세요.'});
 
@@ -1408,9 +1418,9 @@ function finalize(R){
   const orig = R.toks.map((t,i)=> R.st[i]===1 ? esc(t.raw) : `<span class="miss">${esc(t.raw)}</span>`).join(' ');
   const spoken = R.heard.map(h=>esc(h.raw)).join(' ');
 
-  S.history.push({ time:fmt(A.dur), wpm:Math.round(A.wpm), cov:Math.round(A.coverage*100), at:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) });
+  S.history.push({ time:fmt(A.dur), wpm:Math.round(A.wpm), cov:A.coverage==null ? '자유' : Math.round(A.coverage*100), at:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) });
   store.set('rsp-history', S.history.slice(-10));
-  const hist = S.history.slice(-5).map((h,i,a)=>`<span class="num">${S.history.length-a.length+i+1}회 · ${h.time} · ${h.cov}%</span>`).join('');
+  const hist = S.history.slice(-5).map((h,i,a)=>`<span class="num">${S.history.length-a.length+i+1}회 · ${h.time} · ${h.cov}${h.cov==='자유'?'':'%'}</span>`).join('');
 
   const who = esc(stuLabel());
   $('#report').innerHTML = `
@@ -1756,11 +1766,11 @@ function buildReportData(R, A){
   lines.push('', 'TRANSCRIPT (speech recognition):', R.heard.map(h=>h.raw).join(' ') || '(nothing recognized)');
   lines.push('', 'METRICS:',
     `duration ${m(A.dur)} (target: at least 2:00, no upper limit); words recognized ${R.heard.length}; speaking rate ${Math.round(A.wpm)} wpm (comfortable 120–140)`,
-    `script coverage ${Math.round(A.coverage*100)}%; filler words ${A.fillers}`,
+    A.coverage==null ? `FREE TALK: no script was written, the student spoke freely (judge structure and language from the transcript); filler words ${A.fillers}` : `script coverage ${Math.round(A.coverage*100)}%; filler words ${A.fillers}`,
     `hint button used ${(R.hints||[]).length} times${(R.hints||[]).length ? ' at '+R.hints.map(h=>m(h.t)).join(', ') : ''} (no-script rehearsal: shows the next 3 words)`,
     `pauses of 1.5s or more: ${A.pauseList.length ? A.pauseList.map(p=>`${m(p.at)} (${p.d.toFixed(1)}s)`).join(', ') : 'none'}`,
     `stage start times: ${SECS.map((s,i)=>`${s.en} ${R.secT[i]!=null ? m(R.secT[i]) : 'not reached'}`).join(', ')}`,
-    `stage coverage (share of script words recognized): ${SECS.map((s,i)=>`${s.en} ${Math.round((1-A.secMiss[i])*100)}%`).join(', ')}`,
+    A.coverage==null ? 'stage coverage: n/a (no script)' : `stage coverage (share of script words recognized): ${SECS.map((s,i)=>`${s.en} ${Math.round((1-A.secMiss[i])*100)}%`).join(', ')}`,
     `body movement: ${A.motionDesc}`);
   if (A.gesture) lines.push(`GESTURES (on-device pose estimate): hands visible ${Math.round(A.gesture.vis*100)}% of the time; hands moving ${Math.round(A.gesture.active*100)}% of visible time; about ${A.gesture.moments} distinct gestures (${A.gesture.perMin.toFixed(1)} per minute); hands at chest height or above ${Math.round(A.gesture.chest*100)}% of visible time; upper body in frame ${Math.round(A.gesture.body*100)}%; summary: ${({good:'natural use of gestures', still:'hands mostly still', busy:'very frequent hand movement (may look fidgety)', hidden:'hands mostly out of frame, so gestures could not be judged'})[A.gesture.level]}`);
   if (A.gaze) lines.push(`GAZE (on-device estimate): facing camera ${Math.round(A.gaze.front*100)}%, looking down ${Math.round(A.gaze.down*100)}%, looking aside ${Math.round(A.gaze.side*100)}%, smiling ${Math.round(A.gaze.smile*100)}%, face not visible ${Math.round(A.gaze.missing*100)}%`,
@@ -1820,7 +1830,7 @@ var SERVER_PREV = null;
 function prevRun(){ const r = localRuns(); return r.length ? r[r.length-1] : SERVER_PREV; }
 function pctOrBlank(x){ return x==null ? '' : Math.round(x*100); }
 function runRecord(A, axis, tip){
-  const rec = { cha:$('#t-cha').value, at:new Date().toISOString(), dur:Math.round(A.dur), wpm:Math.round(A.wpm), cov:Math.round(A.coverage*100), fillers:A.fillers,
+  const rec = { cha:$('#t-cha').value, at:new Date().toISOString(), dur:Math.round(A.dur), wpm:Math.round(A.wpm), cov:A.coverage==null ? '' : Math.round(A.coverage*100), fillers:A.fillers,
     longest:+A.longest.toFixed(1), front: A.gaze ? pctOrBlank(A.gaze.front) : '', smile: A.gaze ? pctOrBlank(A.gaze.smile) : '', lively: A.expr ? Math.round(A.expr.lively*100) : '',
     mode: curMode(), stg: A.secMiss.map(x=>Math.round((1-x)*100)), stgFront: A.expr ? A.expr.stages.map(x=>x ? Math.round(x.front*100) : '') : [] };
   rec.mission = makeMission(axis, rec, A);
@@ -1986,7 +1996,7 @@ function renderPvText(){
   fitText(el, 20, 13);
 }
 function showSpg(i){
-  if (!S.run) return; i = Math.max(0, Math.min(4, i)); S.run.viewSec = i;
+  if (!S.run || S.run.free) return; i = Math.max(0, Math.min(4, i)); S.run.viewSec = i;
   $$('#scriptbox .spg').forEach(p=>p.classList.toggle('on', +p.dataset.sec===i));
   const s = SECS[i]; $('#sp-lbl').innerHTML = `<i style="background:${s.hex}"></i>${i+1}. ${s.k} · ${s.en} <span style="margin-left:auto">${i+1} / 5</span>`;
   $('#sp-prev').disabled = i===0; $('#sp-next').disabled = i===4;
@@ -2001,8 +2011,9 @@ $('#pv-add').onclick = ()=>$('#file').click();
 $('#pv-gs-go').onclick = ()=>{ const u = $('#pv-gs').value.trim(); $('#pv-gs').value=''; loadGSlides(u); };
 $('#pv-gs').addEventListener('keydown', e=>{ if (e.key==='Enter') { e.preventDefault(); $('#pv-gs-go').click(); } });
 $('#pv-sample').onclick = ()=>{ S.slides = SAMPLE_SLIDES.map((u,i)=>({ name:`샘플 ${i+1}`, url:u })); pvSlide = 0; renderThumbs(); toast('샘플 PPT 7장을 불러왔어요'); };
-$('#sp-prev').onclick = ()=>showSpg((S.run && S.run.viewSec || 0) - 1);
-$('#sp-next').onclick = ()=>showSpg((S.run && S.run.viewSec || 0) + 1);
+function freeStep(d){ const R=S.run; if (!R) return; R.curSec = Math.max(0, Math.min(4, R.curSec + d)); if (R.active && R.secT[R.curSec]==null) R.secT[R.curSec]=(performance.now()-R.t0)/1000; renderSecDots(R.curSec); R0ns(); if (!S.slides.length) showSlide(0); }
+$('#sp-prev').onclick = ()=> S.run && S.run.free ? freeStep(-1) : showSpg((S.run && S.run.viewSec || 0) - 1);
+$('#sp-next').onclick = ()=> S.run && S.run.free ? freeStep(1) : showSpg((S.run && S.run.viewSec || 0) + 1);
 $('#beats').addEventListener('input', e=>{ const id = e.target.id || ''; if (/^sec-\d$/.test(id)) pvSec = +id.slice(4); clearTimeout(window.__pvt); window.__pvt = setTimeout(renderPvText, 150); });
 $('#beats').addEventListener('focusin', e=>{ const id = e.target.id || ''; if (/^sec-\d$/.test(id)) { pvSec = +id.slice(4); renderPvText(); } });
 document.addEventListener('keydown', e=>{
@@ -2204,6 +2215,33 @@ $('#beats').addEventListener('click', e=>{
   setSection(i, before + mid + after, starter ? '넣었어요 · ___ 자리에 이어지는 말을 내가 직접 써요' : '연결 표현을 넣었어요');
   const t2 = $('#sec-'+i); t2.focus(); t2.setSelectionRange(selA, selB);
 });
+
+/* ===== 안드로이드 패드: 실시간 음성 인식 대신, 발표가 끝나면 녹음을 서버에서 글자로 바꿔요 ===== */
+const IS_ANDROID = /Android/i.test(navigator.userAgent), NO_LIVE_SR = false;
+// 패드는 소리 크기를 못 재니까, 음성 인식 결과가 들어온 시각으로 '말한 구간'과 멈춤을 계산해요
+function androidRms(R){ const ts = R.srT || [], out = []; let k = 0; for (let t = 0; t < R.duration; t += 0.1) { while (k < ts.length && ts[k] < t - 0.7) k++; const on = k < ts.length && Math.abs(ts[k] - t) <= 0.7; out.push({ t, v: on ? 0.05 : 0.001 }); } R.rms = out; }
+function blobToB64(b){ return new Promise((res,rej)=>{ const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = rej; r.readAsDataURL(b); }); }
+async function serverTranscribe(R, T){
+  if (!C.server || !stu().full) return;
+  try {
+    T.textContent = '녹음을 글자로 바꾸는 중이에요 · 10~20초';
+    const blob = new Blob(R.achunks, { type: (R.arec && R.arec.mimeType) || 'audio/webm' });
+    if (blob.size < 2000) return;
+    const x = stu();
+    const r = await fetch(C.server, { method:'POST', body: JSON.stringify({ task:'stt', cls:x.cls, grade:x.grade, ban:x.ban, no:x.no, name:x.name, cha:$('#t-cha').value, mime: blob.type.split(';')[0], audio: await blobToB64(blob) }) });
+    const d = await r.json();
+    if (!d.ok) { toast(d.error || '음성을 글자로 바꾸지 못했어요'); return; }
+    const ws = words(d.text || '').filter(w => norm(w));
+    if (!ws.length) return;
+    // 말한 시간대(소리가 난 구간)에 단어를 고르게 나눠 시각을 붙여요
+    let mx = 0; R.rms.forEach(v => mx = Math.max(mx, v.v)); const thr = Math.max(.005, mx * .1);
+    const loud = R.rms.filter(v => v.v > thr).map(v => v.t); const span = loud.length ? loud : [0, R.duration];
+    const heard = ws.map((w, i) => ({ raw: w, n: norm(w), t: span[Math.min(span.length - 1, Math.floor(i / ws.length * span.length))] }));
+    const st = new Array(R.toks.length).fill(0), secT = [0, null, null, null, null]; let p = 0;
+    heard.forEach(h => { for (let j = p; j < Math.min(R.toks.length, p + 15); j++) if (eqWord(R.toks[j].n, h.n)) { for (let k = p; k < j; k++) if (!st[k]) st[k] = 2; st[j] = 1; const sc = R.toks[j].sec; if (sc > 0 && secT[sc] == null) secT[sc] = h.t; p = j + 1; break; } });
+    R.heard = heard; R.st = st; R.p = p; R.secT = secT; R.segs = [{ t0: 0, words: heard }]; R.sttUsed = true;
+  } catch (e) { toast('음성을 글자로 바꾸지 못했어요 · 인터넷 연결을 확인해 주세요'); }
+}
 
 readSections();
 setTimeout(fetchServerPrev, 300);
