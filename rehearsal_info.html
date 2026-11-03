@@ -750,6 +750,11 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 .seg .st{padding:10px 14px;font-size:15px;line-height:1.75;word-break:keep-all}
 .seg .st.none{color:var(--faint);font-style:italic}
 .ev-next{margin-top:18px}
+mark.mk-sup{background:linear-gradient(transparent 55%,var(--hl) 55%,var(--hl) 94%,transparent 94%);color:inherit;padding:0 1px}
+mark.mk-sup i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.02em;border:1px solid var(--ink);background:var(--card);padding:0 5px;margin-left:4px;vertical-align:2px;white-space:nowrap}
+mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotted var(--ink);text-decoration-thickness:2px;text-underline-offset:4px}
+.mk-lg{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
+.mk-lg mark.mk-pat{color:var(--text)}
 .brief.next::before{content:"다음 한 가지"}
 @media (max-width:860px){.optgrid,.struct,.ev-grid{grid-template-columns:1fr}.opt,.struct > div,.ev-grid > div{border-right:0;border-bottom:1px solid var(--ink)}.opt:last-child,.struct > div:last-child,.ev-grid > div:last-child{border-bottom:0}.vs{grid-template-columns:1fr}.vs .arrow{display:none}.seg{grid-template-columns:1fr}.seg .sl{border-right:0;border-bottom:1px solid var(--line)}}
 @media (pointer:coarse){.opt{padding:14px}.plan-topic input{font-size:18px}}
@@ -778,7 +783,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
       <div class="pills">
         <span class="pill"><i style="background:var(--s4)"></i>최소 2:00 이상</span>
         <span class="pill"><i style="background:var(--s1)"></i>서론 · 본론 1·2·3 · 결론</span>
-        <span class="pill"><i style="background:var(--s2)"></i>조직 방식 1 + 뒷받침 자료 2</span>
+        <span class="pill"><i style="background:var(--s2)"></i>조직 방식 1가지 + 뒷받침 자료 2가지</span>
         <span class="pill"><i style="background:var(--s0)"></i>영어 발표 · Chrome 권장</span>
       </div>
       <div class="ticket">
@@ -812,7 +817,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
       <div class="plan">
         <label class="plan-topic"><span class="pl">발표 제목 <small>Title · 영어로 한 줄 · 수행평가지의 제목과 같게</small><span class="req" id="req-topic">필수</span></span><input id="p-topic" placeholder="예: From Farm to Cup: The Journey of Coffee" autocomplete="off"></label>
         <div><div class="pl">조직 방식 <small>Organizational pattern · 하나만</small><span class="req" id="req-pattern">필수</span></div><div class="optgrid" id="p-pattern" role="radiogroup" aria-label="조직 방식"></div></div>
-        <div><div class="pl">뒷받침 자료 <small>Supporting materials · 두 가지 이상 골라서 본론에 녹여 넣기</small><span class="req" id="req-sup">2개 이상</span></div><div class="optgrid" id="p-sup" aria-label="뒷받침 자료"></div></div>
+        <div><div class="pl">뒷받침 자료 <small>Supporting materials · 5가지 중 두 가지를 골라 본론에 녹여 넣기</small><span class="req" id="req-sup">2개 선택</span></div><div class="optgrid" id="p-sup" aria-label="뒷받침 자료"></div></div>
         <div><div class="pl">발표 구조 <small>이 순서로 말해요 · 고른 조직 방식에 맞춰 본론 안내가 바뀌어요</small></div><div class="struct" id="p-struct"></div></div>
       </div>
     </section>
@@ -1025,15 +1030,15 @@ function renderPlan(){
   const rt=$('#req-topic'), rp=$('#req-pattern'), rs=$('#req-sup');
   rt.textContent = S.plan.topic.trim().length>=3 ? '✓' : '필수'; rt.classList.toggle('ok', S.plan.topic.trim().length>=3);
   rp.textContent = p ? '✓ '+p.en : '필수'; rp.classList.toggle('ok', !!p);
-  rs.textContent = S.plan.supports.length>=2 ? `✓ ${S.plan.supports.length}개` : `${S.plan.supports.length}/2개`; rs.classList.toggle('ok', S.plan.supports.length>=2);
+  rs.textContent = S.plan.supports.length>=2 ? '✓ 2개' : `${S.plan.supports.length}/2개`; rs.classList.toggle('ok', S.plan.supports.length>=2);
   const sum = $('#plan-sum'); if (sum) sum.innerHTML = planOk()
     ? `<span><b>${esc(S.plan.topic.trim())}</b></span><span class="pill"><i style="background:var(--s1)"></i>${p.en}</span>${supsOf().map(x=>`<span class="pill"><i style="background:var(--s3)"></i>${x.en}</span>`).join('')}`
-    : '<span>발표 설계를 마치면 여기에 요약이 보여요. 조직 방식은 <b>하나</b>, 뒷받침 자료는 <b>두 가지 이상</b>이에요.</span>';
+    : '<span>발표 설계를 마치면 여기에 요약이 보여요. 조직 방식은 <b>하나</b>, 뒷받침 자료는 <b>두 가지</b>예요.</span>';
   if ($('#p-topic').value !== S.plan.topic) $('#p-topic').value = S.plan.topic;
 }
 $('#p-topic').addEventListener('input', e=>{ S.plan.topic = e.target.value; store.set('rsp-plan', S.plan); const rt=$('#req-topic'); rt.textContent = S.plan.topic.trim().length>=3 ? '✓' : '필수'; rt.classList.toggle('ok', S.plan.topic.trim().length>=3); clearTimeout(window.__pt); window.__pt = setTimeout(()=>{ renderPlan(); updateChecks(); }, 250); });
 $('#p-pattern').addEventListener('click', e=>{ const b = e.target.closest('[data-p]'); if (!b) return; S.plan.pattern = S.plan.pattern===b.dataset.p ? '' : b.dataset.p; savePlan(); });
-$('#p-sup').addEventListener('click', e=>{ const b = e.target.closest('[data-s]'); if (!b) return; const id=b.dataset.s, i=S.plan.supports.indexOf(id); if (i>=0) S.plan.supports.splice(i,1); else S.plan.supports.push(id); savePlan(); });
+$('#p-sup').addEventListener('click', e=>{ const b = e.target.closest('[data-s]'); if (!b) return; const id=b.dataset.s, i=S.plan.supports.indexOf(id); if (i>=0) S.plan.supports.splice(i,1); else { S.plan.supports.push(id); if (S.plan.supports.length > 2) S.plan.supports.shift(); } savePlan(); });   // 수행평가 기준: 정확히 2가지
 const planText = () => { const p=patOf(); return `Topic: ${S.plan.topic.trim()||'(none)'} | Pattern: ${p?p.en:'(none)'} | Supports: ${supsOf().map(x=>x.en).join(', ')||'(none)'}`; };
 
 /* slides */
@@ -1226,7 +1231,7 @@ function updateChecks(){
   });
   let msg, go='';
   if (!items[0].ok) { msg = '<b>먼저</b> · 내 클래스(A반 · 우연실 선생님 / E반 · 김형규 선생님)와 반·번호·이름을 입력해 주세요.'; go='<button class="btn sm go" data-go="ticket">입력하러 가기</button>'; }
-  else if (!items[1].ok) { msg = '<b>1단계</b> · 발표 주제를 적고, 조직 방식 <b>하나</b>와 뒷받침 자료 <b>두 가지 이상</b>을 골라요. 대본은 쓰지 않아요.'; go='<button class="btn sm go" data-go="plan">설계하러 가기</button>'; }
+  else if (!items[1].ok) { msg = '<b>1단계</b> · 발표 제목을 적고, 조직 방식 <b>하나</b>와 뒷받침 자료 <b>두 가지</b>를 골라요. 대본은 쓰지 않아요.'; go='<button class="btn sm go" data-go="plan">설계하러 가기</button>'; }
   else if (!items[2].ok && !S.history.length) { msg = `<b>2단계</b> · ${esc(p.en)} 방식, 자료 ${supsOf().map(x=>x.en).join('·')}. 이제 카메라를 켜면 시작할 수 있어요.`; go='<button class="btn sm go" data-go="cam">카메라 켜기</button>'; }
   else if (!S.history.length) { msg = '<b>3단계</b> · 준비 완료. 서론 → 본론 1·2·3 → 결론 순서로 2분 이상 말해요. 끝나면 말한 내용을 글자로 바꿔 평가해요.'; go='<button class="btn sm go" data-go="start">리허설 시작</button>'; }
   else { const h=S.history[S.history.length-1]; msg = `<b>${S.history.length}회 리허설 완료</b> · 최근 ${h.time}, ${h.wpm}단어/분. 지난 평가의 한 가지만 고쳐서 다시 해보세요.`; go='<button class="btn sm go" data-go="start">다시 리허설</button>'; }
@@ -1747,7 +1752,7 @@ function renderEval(E, R){
       <div class="vs"><div><div class="k">내가 고른 방식</div><div class="v">${esc(declared)}</div></div><div class="arrow">→</div><div><div class="k">AI가 전사에서 감지한 방식</div><div class="v">${esc(det)}<small>확신 ${esc({high:'높음',medium:'중간',low:'낮음'}[pa.confidence]||pa.confidence||'')}</small><span class="match ${match?'ok':'no'}">${match ? '일치' : '불일치'}</span></div></div></div>
       <div class="b">${(pa.evidence||[]).map(q=>`<span class="quote">“${esc(q)}”</span>`).join('') || '<p style="color:var(--muted)">조직 방식을 보여 주는 연결어·구조 신호가 뚜렷하게 들리지 않았어요.</p>'}${pa.question ? `<p class="q"><b>Q.</b> ${esc(pa.question)}</p>` : ''}</div></div>
 
-    <div class="ev-sec"><div class="h">③ 뒷받침 자료 · 서로 다른 종류 ${distinct}개 감지 <span style="color:var(--muted);font-weight:600">(기준 2개 이상 · 내가 고른 것: ${supsOf().map(x=>x.en).join(', ')||'-'})</span>${lvTag(su.level)}</div>
+    <div class="ev-sec"><div class="h">③ 뒷받침 자료 · 서로 다른 종류 ${distinct}개 감지 <span style="color:var(--muted);font-weight:600">(기준 2가지 · 내가 고른 것: ${supsOf().map(x=>x.en).join(', ')||'-'})</span>${lvTag(su.level)}</div>
       <div class="b">${found.length ? `<table class="evtab"><thead><tr><th style="width:150px">종류</th><th>실제로 말한 부분</th><th style="width:90px">녹아듦</th><th style="width:30%">판단</th></tr></thead><tbody>${found.map(f=>`<tr><td><b>${esc(f.type||'')}</b>${f.declared===false?'<br><small style="color:var(--muted)">고르지 않았던 종류</small>':''}</td><td class="q">“${esc(f.quote||'')}”</td><td>${ynp(f.integrated)}</td><td>${esc(f.note||'')}</td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--muted)">뒷받침 자료로 볼 수 있는 부분이 들리지 않았어요.</p>'}
       ${(su.missing_declared||[]).length ? `<p style="margin-top:8px"><b>고르고 안 쓴 것</b> · ${su.missing_declared.map(esc).join(', ')}</p>` : ''}${su.question ? `<p class="q"><b>Q.</b> ${esc(su.question)}</p>` : ''}</div></div>
 
@@ -1765,8 +1770,22 @@ function renderEval(E, R){
   // 구간별 전사
   const tb = $('#tr-body'), tm = $('#tr-meta');
   if (tb && segs.length) {
-    tb.innerHTML = `<div class="segs">${SECS.map((s,i)=>{ const g = segs.find(x=>x.part===s.en) || segs[i] || {}; return `<div class="seg"><div class="sl"><i style="background:${s.hex}"></i>${i+1}. ${s.k}<br><small style="font-weight:600;color:var(--muted)">${s.en}</small></div><div class="st ${g.text?'':'none'}">${esc(g.text || '이 단계로 볼 수 있는 부분이 없어요')}</div></div>`; }).join('')}</div>`;
-    if (tm) tm.textContent = `AI가 전사를 5단계로 나눠 봤어요 · 단어 ${words(transcriptOf(R)).length}개`;
+    // 근거 표시: 뒷받침 자료 인용은 밑줄 + 종류 라벨, 조직 방식 신호는 점선 밑줄 (수행평가지의 '밑줄 긋기'에 해당)
+    const marks = [];
+    found.forEach(f=>{ if (f.quote) marks.push({ q:f.quote, cls:'mk-sup', tag:f.type||'' }); });
+    (pa.evidence||[]).forEach(q=>{ if (q) marks.push({ q, cls:'mk-pat', tag:'' }); });
+    const norm2 = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const markText = text => {
+      let html = esc(text);
+      marks.sort((a,b)=>b.q.length-a.q.length).forEach(m=>{
+        const key = norm2(m.q).split(' ').filter(Boolean); if (key.length < 2) return;
+        const re = new RegExp(key.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('[^A-Za-z0-9]+'), 'i');
+        html = html.replace(re, hit => `<mark class="${m.cls}">${hit}${m.tag ? `<i>${esc(m.tag)}</i>` : ''}</mark>`);
+      });
+      return html;
+    };
+    tb.innerHTML = `<div class="mk-lg"><span><mark class="mk-sup">뒷받침 자료<i>종류</i></mark> 로 분류된 근거</span><span><mark class="mk-pat">조직 방식 신호</mark> 연결어·구조</span></div><div class="segs">${SECS.map((s,i)=>{ const g = segs.find(x=>x.part===s.en) || segs[i] || {}; return `<div class="seg"><div class="sl"><i style="background:${s.hex}"></i>${i+1}. ${s.k}<br><small style="font-weight:600;color:var(--muted)">${s.en}</small></div><div class="st ${g.text?'':'none'}">${g.text ? markText(g.text) : '이 단계로 볼 수 있는 부분이 없어요'}</div></div>`; }).join('')}</div>`;
+    if (tm) tm.textContent = `AI가 전사를 5단계로 나누고 근거에 밑줄을 그었어요 · 단어 ${words(transcriptOf(R)).length}개`;
   }
 }
 
@@ -1852,7 +1871,7 @@ function chatContext(){
   const pm = prevRun();
   if (pm) lines.push(`Last rehearsal (${pm.cha||''}): ${fmt(pm.dur||0)}, ${pm.wpm} wpm, coverage ${pm.cov}%, fillers ${pm.fillers}, facing camera ${pm.front===''||pm.front==null?'n/a':pm.front+'%'}`);
   if (pm && pm.mission) lines.push(`Current mission: ${pm.aiMission || pm.mission.text}`);
-  lines.push('Assignment: INFORMATIVE SPEECH (no script; structure Introduction / Body 1 / Body 2 / Body 3 / Conclusion; one organizational pattern out of Topical, Chronological, Spatial, Compare & Contrast, Cause & Effect; at least two kinds of supporting material out of Anecdote, Example, Definition, Testimony, Fact & Statistics).');
+  lines.push('Assignment: INFORMATIVE SPEECH (no script; structure Introduction / Body 1 / Body 2 / Body 3 / Conclusion; one organizational pattern out of Topical, Chronological, Spatial, Compare & Contrast, Cause & Effect; at least two kinds of supporting material out of Anecdote, Example, Definition, Testimony, Fact & Statistic).');
   if ($('#chat-ctx').checked) { lines.push('Student plan: ' + planText()); const L = S.lastRun; if (L && L.E) lines.push('Last AI evaluation (levels 1-4): overall ' + (L.E.overall||{}).level + ', structure ' + (L.E.structure||{}).level + ', pattern ' + (L.E.pattern||{}).level + ' (declared ' + ((patOf()||{}).en||'-') + ', detected ' + ((L.E.pattern||{}).detected||'-') + '), supports ' + (L.E.supports||{}).level + ', language ' + (L.E.language||{}).level + '. Next step: ' + (L.E.next_step||'')); if (L) lines.push('Last transcript: ' + transcriptOf(L.R).slice(0, 1500)); }
   return lines.join('\n');
 }
