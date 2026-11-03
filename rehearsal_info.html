@@ -826,7 +826,7 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
     <div class="grid2">
       <section class="card" id="cam-card">
         <div class="card-h"><h2>카메라·마이크</h2><span class="meta" id="ready-n">0/3 준비됨</span></div>
-        <div class="cdown pre"><div class="cd-top"><span class="cd-l">리허설 타이머 · 최소 2:00 이상 · 시간 제한은 없어요</span><span class="cd-n num">2:00+</span></div></div>
+        <div class="cdown pre"><div class="cd-top"><span class="cd-l">최소 2:00</span><span class="cd-n num">2:00+</span></div></div>
         <div class="cam">
           <video id="pv" autoplay muted playsinline></video>
           <div class="ph" id="pv-ph"><span>카메라가 꺼져 있어요</span><button class="btn sm" id="btn-cam">카메라·마이크 켜기</button></div>
@@ -911,7 +911,7 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
 </div>
 <button class="chat-fab" id="chat-fab" aria-label="AI 코치에게 묻기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>AI 코치에게 묻기</span></button>
 <section class="chat hidden" id="chat" aria-label="AI 질문 코치">
-  <div class="chat-h"><div><h3>리허설 코치 · AI</h3><p>답을 바로 주지 않고 함께 생각해요. 사람이 아닌 AI이고, 대화는 선생님께 기록돼요.</p></div><button class="x" id="chat-x" aria-label="닫기">×</button></div>
+  <div class="chat-h"><div><h3>리허설 코치 · AI</h3><p>대화는 선생님께 기록돼요</p></div><button class="x" id="chat-x" aria-label="닫기">×</button></div>
   <div class="chat-log" id="chat-log"></div>
   <div class="chat-q" id="chat-q"></div>
   <div class="chat-in">
@@ -1295,7 +1295,7 @@ async function beginRun(){
   S.run = { free, active:false, t0:0, toks, segs:[], heard:[], st:new Array(toks.length).fill(0), p:0, curSec:0, rms:[], motion:[], gaze:[], secT:[0], chunks:[], videoUrl:null, hints:[], pose:[] };
   hintReset();
   $('#scriptbox').innerHTML = '';
-  $('#live').textContent= NO_LIVE_SR ? '패드 모드 · 발표가 끝나면 녹음을 글자로 바꿔요 (단계 넘기기는 ‹ › 버튼)' : IS_ANDROID ? '패드 모드 · 말하는 내용을 실시간으로 인식해요 (영상에는 소리가 저장되지 않아요)' : '단계가 바뀌면 ‹ › 버튼이나 위쪽 단계 이름을 눌러요'; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
+  $('#live').textContent= ''; $('#timer-n').textContent='0:00'; $('#timer-left').textContent='· 2:00까지 2:00'; $('#timer').classList.remove('warn','over','done'); $('#zone-fill').style.width='0';
   $('#cd-n').textContent = fmt(T_MAX); $('#cd-fill').style.width = '100%'; $('#cdown').classList.remove('warn','over');
   $('#stage').classList.add('m2'); R0ns();
   slideIdx=0; showSlide(0); renderSecDots(0); showView('stage');
@@ -1506,7 +1506,6 @@ function finalize(R){
   ];
   items.push({c:'var(--ok)', h:`잘한 점 · ${axes[best]}`, p:praise[best]});
   items.push({c:'var(--warn)', h:`다음에 고칠 점 · ${axes[order[1][1]]}`, p:tips[order[1][1]]});
-  items.push({c:'var(--blue)', h:'내용·구조', p:'구조와 조직 방식, 뒷받침 자료는 아래 <b>AI 평가</b>에서 전사된 발화를 바탕으로 레벨로 알려줘요.'});
 
   const prev = prevRun();
   const nowRec = runRecord(A, axes[first], tips[first]);
@@ -1525,9 +1524,9 @@ function finalize(R){
   $('#report').innerHTML = `
     <header class="phead">
       <div class="eyebrow">리허설 ${S.history.length}회차 리포트 · ${S.history[S.history.length-1].at}</div>
-      <h1>${sc.reduce((a,b)=>a+b,0)/sc.length >= .75 ? '전달은 좋아요. 이제 내용 구조를 봐요.' : '좋은 출발이에요. 한 가지씩 고쳐봐요.'}</h1>
+      <h1>${esc(S.plan.topic.trim() || 'Informative Speech')}</h1>
       ${who ? `<div class="sig">응시자 <b>${who}</b></div>` : ''}
-      <div class="sig">주제 <b>${esc(S.plan.topic.trim())}</b> · 조직 방식 <b>${esc(p ? p.en : '')}</b> · 뒷받침 자료 <b>${supsOf().map(x=>x.en).join(', ')}</b></div>
+      <div class="sig"><b>${esc(p ? p.en : '')}</b> · <b>${supsOf().map(x=>x.en).join(' · ')}</b></div>
       <div class="history">${hist}</div>
       <div class="sig" id="log-st"></div>
     </header>
@@ -1537,8 +1536,8 @@ function finalize(R){
     <div class="brief key" style="margin:22px 0 0"><span class="brief-t"><b>전달에서 가장 먼저 고칠 한 가지 · ${axes[first]}</b><br>${tips[first]}</span></div>
 
     <div class="rgrid">
-      <div class="card mc"><div class="l">발표 시간</div><div class="v num">${fmt(A.dur)}${timeTag}</div><div class="s">목표 2:00 이상</div></div>
-      <div class="card mc"><div class="l">발화 속도</div><div class="v num">${Math.round(A.wpm)}<small>단어/분</small>${wpmTag}</div><div class="s">듣기 편한 속도 120 – 140</div></div>
+      <div class="card mc"><div class="l">발표 시간</div><div class="v num">${fmt(A.dur)}${timeTag}</div><div class="s">최소 2:00</div></div>
+      <div class="card mc"><div class="l">발화 속도</div><div class="v num">${Math.round(A.wpm)}<small>단어/분</small>${wpmTag}</div><div class="s">120–140</div></div>
       <div class="card mc"><div class="l">군말</div><div class="v num">${A.fillers}<small>회</small>${fillTag}</div><div class="s">1.5초 이상 멈춤 ${A.pauses}번 · 최장 ${A.longest.toFixed(1)}초</div></div>
       <div class="card mc"><div class="l">시선 정면</div><div class="v num">${A.gaze ? gp+'<small>%</small>'+(gp>=70?'<span class="tag g">좋음</span>':'<span class="tag a">연습</span>') : '—'}</div><div class="s">${A.gaze ? '아래 '+Math.round(A.gaze.down*100)+'% · 옆 '+Math.round(A.gaze.side*100)+'% · 미소 '+Math.round(A.gaze.smile*100)+'%' : '시선 분석을 불러오지 못했어요'}</div></div>
       <div class="card mc"><div class="l">손·팔 동작</div><div class="v num">${A.gesture ? (A.gesture.level==='hidden' ? '<small>화면 밖</small>' : A.gesture.moments+'<small>번</small>') + ({good:'<span class="tag g">좋음</span>', still:'<span class="tag a">더 쓰기</span>', busy:'<span class="tag a">산만</span>', hidden:'<span class="tag a">구도</span>'})[A.gesture.level] : '—'}</div><div class="s">${A.gesture ? (A.gesture.level==='hidden' ? '손이 거의 안 보였어요 · 카메라를 조금 멀리 두고 허리 위까지 보이게 해요' : '손 보임 '+Math.round(A.gesture.vis*100)+'% · 움직임 '+Math.round(A.gesture.active*100)+'% · 가슴 높이 '+Math.round(A.gesture.chest*100)+'%') : '손동작 분석을 불러오지 못했어요'}</div></div>
@@ -1548,13 +1547,13 @@ function finalize(R){
     ${exprHTML}
 
     <section class="card sect" id="reflect">
-      <div class="card-h"><h2>나의 성찰</h2><span class="meta">한국어로 한두 문장씩 · 영상 셀프 체크와 함께 선생님께 제출돼요</span></div>
+      <div class="card-h"><h2>나의 성찰</h2></div>
       <div class="rf">
-        <label class="rf-q"><span><b>1</b>이번 리허설에서 지난번보다 바꾼 것</span><textarea id="rf1" rows="2" placeholder="예: 본론 2에 통계를 출처와 함께 넣어 말했다"></textarea></label>
-        <label class="rf-q"><span><b>2</b>아직 어려운 것</span><textarea id="rf2" rows="2" placeholder="예: 서론에서 세 요점을 미리 말하는 걸 자꾸 잊는다"></textarea></label>
-        <label class="rf-q"><span><b>3</b>다음 연습에서 할 것</span><textarea id="rf3" rows="2" placeholder="예: 본론이 바뀔 때마다 연결어(First, Next, Finally)를 또박또박 말한다"></textarea></label>
+        <label class="rf-q"><span><b>1</b>지난번보다 바꾼 것</span><textarea id="rf1" rows="2"></textarea></label>
+        <label class="rf-q"><span><b>2</b>아직 어려운 것</span><textarea id="rf2" rows="2"></textarea></label>
+        <label class="rf-q"><span><b>3</b>다음에 할 것</span><textarea id="rf3" rows="2"></textarea></label>
       </div>
-      <div class="rf-foot"><span class="meta" id="rf-st">아래 '영상 셀프 리뷰' 체크도 함께 보내져요</span><button class="btn" id="rf-go">선생님께 제출</button></div>
+      <div class="rf-foot"><span class="meta" id="rf-st"></span><button class="btn" id="rf-go">선생님께 제출</button></div>
     </section>
 
     <div class="rmid">
@@ -1563,8 +1562,8 @@ function finalize(R){
     </div>
 
     <section class="card sect" id="tr-card">
-      <div class="card-h"><h2>실제로 말한 내용</h2><span class="meta" id="tr-meta">음성 인식 결과 · 단어 ${R.heard.length}개</span></div>
-      <div id="tr-body"><div class="cmp" style="grid-template-columns:1fr"><div><div class="h">전사(transcript)</div><div class="b">${esc(spoken) || '인식된 음성이 없어요. 마이크 권한과 선생님 서버 연결을 확인해 주세요.'}</div></div></div></div>
+      <div class="card-h"><h2>실제로 말한 내용</h2><span class="meta" id="tr-meta">단어 ${R.heard.length}개</span></div>
+      <div id="tr-body"><div class="cmp" style="grid-template-columns:1fr"><div><div class="b">${esc(spoken) || '인식된 음성 없음 · 마이크 권한·서버 연결 확인'}</div></div></div></div>
     </section>
 
     <section class="card sect">
@@ -1689,16 +1688,16 @@ function evalPayload(R, A){
 function renderEvalGate(){
   const box = $('#ai-rep'); if (!box) return;
   const ready = !!C.server && stu().full;
-  box.innerHTML = `<div class="card-h"><h2>AI 평가 · Informative Speech</h2><span class="meta">전사 기준 · 4단계 레벨</span></div>
-    <div class="ai-gate"><p>${ready ? '말한 내용을 글자로 바꿔 평가를 준비하고 있어요…' : (!C.server ? '선생님 서버 주소가 연결되면 평가할 수 있어요.' : '클래스·반·번호·이름을 넣으면 평가할 수 있어요.')}</p>
+  box.innerHTML = `<div class="card-h"><h2>AI 평가</h2></div>
+    <div class="ai-gate"><p>${ready ? '준비 중…' : (!C.server ? '선생님 서버 연결 필요' : '클래스·반·번호·이름 입력 필요')}</p>
     ${ready ? '' : '<button class="btn sec" id="ai-set">연결 설정</button>'}</div>`;
   if (!ready) $('#ai-set').onclick = openSettings;
 }
 async function runInfoEval(){
   const box = $('#ai-rep'), L = S.lastRun; if (!L || !box) return;
   const tr = transcriptOf(L.R);
-  if (words(tr).length < 15) { box.innerHTML = '<div class="card-h"><h2>AI 평가 · Informative Speech</h2></div><div class="coach-err">인식된 말이 너무 적어서 평가할 수 없어요 (단어 ' + words(tr).length + '개). 마이크 권한과 선생님 서버 연결을 확인하고 다시 리허설해 주세요.</div>'; return; }
-  box.innerHTML = '<div class="card-h"><h2>AI 평가 · Informative Speech</h2></div><div class="coach-wait"><div class="spin"></div>전사된 발화를 읽고 구조·조직 방식·뒷받침 자료를 평가하고 있어요. 15–30초 걸려요.</div>';
+  if (words(tr).length < 15) { box.innerHTML = '<div class="card-h"><h2>AI 평가</h2></div><div class="coach-err">인식된 말이 너무 적어서 평가할 수 없어요 (단어 ' + words(tr).length + '개). 마이크 권한과 선생님 서버 연결을 확인하고 다시 리허설해 주세요.</div>'; return; }
+  box.innerHTML = '<div class="card-h"><h2>AI 평가</h2></div><div class="coach-wait"><div class="spin"></div>평가 중 · 15–30초</div>';
   try {
     const r = await fetch(C.server, { method:'POST', body: JSON.stringify(evalPayload(L.R, L.A)) });
     const d = await r.json();
@@ -1707,7 +1706,7 @@ async function runInfoEval(){
     const st = $('#log-st'); if (st && d.saved) st.textContent = (st.textContent ? st.textContent + ' · ' : '') + 'AI 평가 시트 저장됨';
     if (d.result.next_step) saveAiMission(d.result.next_step);
   } catch(e) {
-    box.innerHTML = `<div class="card-h"><h2>AI 평가 · Informative Speech</h2></div><div class="coach-err">평가하지 못했어요. ${esc(e.message||e)}</div><div style="padding:0 0 4px"><button class="btn sec sm" id="ai-retry">다시 시도</button></div>`;
+    box.innerHTML = `<div class="card-h"><h2>AI 평가</h2></div><div class="coach-err">평가하지 못했어요. ${esc(e.message||e)}</div><div style="padding:0 0 4px"><button class="btn sec sm" id="ai-retry">다시 시도</button></div>`;
     $('#ai-retry').onclick = runInfoEval;
   }
 }
@@ -1721,7 +1720,7 @@ function renderEval(E, R){
   const found = su.found || [], distinct = su.count_distinct != null ? su.count_distinct : new Set(found.map(f=>f.type)).size;
   const segs = (E.segments || []);
   box.innerHTML = `
-    <div class="card-h"><h2>AI 평가 · Informative Speech</h2><span class="meta">전사 기준 · 인용은 실제 발화</span><button class="btn ghost sm act" id="ai-redo">다시 평가</button></div>
+    <div class="card-h"><h2>AI 평가</h2><button class="btn ghost sm act" id="ai-redo">다시 평가</button></div>
     <div class="ev-top"><div class="big">${lvTag(o.level)}<small>종합 · ${LV[Math.max(1,Math.min(4,Math.round(+o.level||1)))][1]}</small></div><p>${esc(o.summary||'')}</p></div>
     <div class="ev-grid">
       <div><div class="l">① 구조 · 5단계${lvTag(st.level)}</div><p>${esc(st.comment||'')}</p></div>
@@ -1766,8 +1765,8 @@ function renderEval(E, R){
       });
       return html;
     };
-    tb.innerHTML = `<div class="mk-lg"><span><mark class="mk-sup">뒷받침 자료<i>종류</i></mark> 로 분류된 근거</span><span><mark class="mk-pat">조직 방식 신호</mark> 연결어·구조</span></div><div class="segs">${SECS.map((s,i)=>{ const g = segs.find(x=>x.part===s.en) || segs[i] || {}; return `<div class="seg"><div class="sl"><i style="background:${s.hex}"></i>${i+1}. ${s.k}<br><small style="font-weight:600;color:var(--muted)">${s.en}</small></div><div class="st ${g.text?'':'none'}">${g.text ? markText(g.text) : '이 단계로 볼 수 있는 부분이 없어요'}</div></div>`; }).join('')}</div>`;
-    if (tm) tm.textContent = `AI가 전사를 5단계로 나누고 근거에 밑줄을 그었어요 · 단어 ${words(transcriptOf(R)).length}개`;
+    tb.innerHTML = `<div class="mk-lg"><span><mark class="mk-sup">뒷받침 자료<i>종류</i></mark></span><span><mark class="mk-pat">조직 방식 신호</mark></span></div><div class="segs">${SECS.map((s,i)=>{ const g = segs.find(x=>x.part===s.en) || segs[i] || {}; return `<div class="seg"><div class="sl"><i style="background:${s.hex}"></i>${i+1}. ${s.k}<br><small style="font-weight:600;color:var(--muted)">${s.en}</small></div><div class="st ${g.text?'':'none'}">${g.text ? markText(g.text) : '이 단계로 볼 수 있는 부분이 없어요'}</div></div>`; }).join('')}</div>`;
+    if (tm) tm.textContent = `단어 ${words(transcriptOf(R)).length}개`;
   }
 }
 
@@ -1810,7 +1809,7 @@ function growthCard(p, n, mc){
     row('군말', p.fillers, n.fillers, 'down', id), row('최장 멈춤(초)', p.longest, n.longest, 'down', x=>(+x).toFixed(1)), row('시선 정면', p.front, n.front, 'up', pc)].join('');
   const mis = p.mission ? (mc ? `<div class="misres"><span class="stamp ${mc.ok?'ok':'no'}">${mc.ok?'미션 달성':'다시 도전'}</span><p><b>지난 미션</b> ${esc(p.mission.text)} → 이번 ${esc(mc.now)}</p></div>`
     : `<div class="misres"><span class="stamp no">셀프 체크</span><p><b>지난 미션</b> ${esc(p.mission.text)} · 녹화 영상으로 직접 확인해 보세요</p></div>`) : '';
-  return `<section class="card sect"><div class="card-h"><h2>지난번 대비</h2><span class="meta">${esc(p.cha||'이전')} → ${esc(n.cha)} · 초록 ▲▼는 좋아진 것, 빨강은 나빠진 것</span></div><div class="cmpg">${cells}</div>${mis}
+  return `<section class="card sect"><div class="card-h"><h2>지난번 대비</h2><span class="meta">${esc(p.cha||'이전')} → ${esc(n.cha)}</span></div><div class="cmpg">${cells}</div>${mis}
     <p style="margin:12px 0 0;font-size:14.5px"><b>다음 미션</b> · ${esc(n.mission.text)}</p></section>`;
 }
 function exprCard(A){
@@ -1819,7 +1818,7 @@ function exprCard(A){
     return `<tr><td><b>${i+1}. ${s.k}</b></td><td class="n">${x ? Math.round(x.front*100)+'%' : '—'}${x ? `<span class="bar"><i style="width:${Math.round(x.front*100)}%"></i></span>` : ''}</td><td class="n">${x ? Math.round(x.smile*100)+'%' : '—'}</td><td class="c">${comment(x)}</td></tr>`; }).join('');
   const lv = Math.round(e.lively*100), lvTxt = lv < 25 ? '표정 변화가 적어요. 감정이 바뀌는 단계에서 눈썹과 입을 더 움직여 보세요' : lv < 55 ? '감정에 따라 표정이 조금씩 바뀌었어요' : '이야기에 맞춰 표정이 잘 살아 있어요';
   const hm = e.headMove < 3 ? '고개가 거의 고정돼 있어요' : e.headMove > 14 ? '고개 움직임이 많은 편이에요' : '고개 움직임이 자연스러워요';
-  return `<section class="card sect"><div class="card-h"><h2>표정·시선 분석</h2><span class="meta">이 기기 안에서 분석 · 영상은 밖으로 나가지 않아요</span></div>
+  return `<section class="card sect"><div class="card-h"><h2>표정·시선</h2></div>
     <div class="exsum"><div><b>표정 변화</b><span class="num">${lv}</span><small style="color:var(--muted)"> / 100</small><p>${lvTxt}</p></div><div><b>고개 끄덕임</b><span class="num">${e.nods}회</span><p>${hm}</p></div><div><b>미소</b><span class="num">${Math.round(A.gaze.smile*100)}%</span><p>${A.gaze.smile < .05 ? '긴장한 표정이 많았어요' : '여유 있는 표정이 보였어요'}</p></div></div>
     <div style="overflow-x:auto"><table class="extab"><thead><tr><th>단계</th><th>카메라 보기</th><th>미소</th><th>코멘트</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
