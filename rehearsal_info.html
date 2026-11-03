@@ -643,8 +643,8 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 }
 
 /* ===== 정보 전달 발표(Informative Speech) 설계 카드 ===== */
-.plan{display:grid;gap:18px}
-.plan .pl{display:flex;align-items:baseline;gap:8px;font-weight:700;font-size:15px;margin-bottom:8px}
+.plan{display:grid;gap:12px}
+.plan .pl{display:flex;align-items:baseline;gap:8px;font-weight:700;font-size:15px;margin-bottom:6px}
 .plan .pl small{font-weight:600;color:var(--muted);font-size:13px}
 .plan .pl .req{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--warn)}
 .plan .pl .req.ok{color:var(--ok)}
@@ -652,7 +652,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 .plan-topic input:focus{background:var(--card)}
 .plan-topic input::placeholder{color:var(--faint);font-weight:500}
 .optgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--ink);background:var(--card)}
-.opt{border:0;border-right:1px solid var(--ink);background:transparent;text-align:left;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:var(--text)}
+.opt{border:0;border-right:1px solid var(--ink);background:transparent;text-align:left;padding:9px 12px;display:flex;flex-direction:column;gap:0;min-width:0;color:var(--text)}
 .opt:last-child{border-right:0}
 .opt b{font-family:var(--serif);font-size:16px;line-height:1.3}
 .opt b small{font-family:var(--font);font-size:12px;color:var(--muted);font-weight:700;margin-left:6px;letter-spacing:.02em}
@@ -663,13 +663,13 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 .opt[aria-pressed="true"] .d,.opt[aria-pressed="true"] b small{color:var(--bg);opacity:.75}
 .opt[aria-pressed="true"] em{color:var(--hl);opacity:1}
 .struct{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--ink);background:var(--card)}
-.struct > div{padding:12px 14px;border-right:1px solid var(--ink);min-width:0}
+.struct > div{padding:8px 12px;border-right:1px solid var(--ink);min-width:0}
 .struct > div:last-child{border-right:0}
-.struct .m{display:flex;align-items:center;gap:7px;margin:-12px -14px 10px;padding:8px 14px;border-bottom:1px solid var(--ink);background:var(--soft)}
+.struct .m{display:flex;align-items:center;gap:7px;margin:-8px -12px 6px;padding:6px 12px;border-bottom:1px solid var(--ink);background:var(--soft)}
 .struct .m i{width:8px;height:8px;border-radius:50%}
 .struct .m b{font-family:var(--serif);font-size:15px}
 .struct .m small{font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-left:auto}
-.struct p{margin:0;font-size:13.5px;line-height:1.55;word-break:keep-all;color:var(--text)}
+.struct p{margin:0;font-size:13px;line-height:1.45;word-break:keep-all;color:var(--text)}
 .struct p .sg{display:block;margin-top:6px;font-family:var(--mono);font-size:12px;color:var(--muted)}
 .plan-sum{font-size:14.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
 .plan-sum b{color:var(--text)}
@@ -750,6 +750,8 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 .seg .st{padding:10px 14px;font-size:15px;line-height:1.75;word-break:keep-all}
 .seg .st.none{color:var(--faint);font-style:italic}
 .ev-next{margin-top:18px}
+.pv-film{margin-top:10px}
+.pv-frame.over{outline:2px dashed var(--ink);outline-offset:-4px}
 mark.mk-sup{background:linear-gradient(transparent 55%,var(--hl) 55%,var(--hl) 94%,transparent 94%);color:inherit;padding:0 1px}
 mark.mk-sup i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.02em;border:1px solid var(--ink);background:var(--card);padding:0 5px;margin-left:4px;vertical-align:2px;white-space:nowrap}
 mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotted var(--ink);text-decoration-thickness:2px;text-underline-offset:4px}
@@ -757,7 +759,7 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
 .mk-lg mark.mk-pat{color:var(--text)}
 .brief.next::before{content:"다음 한 가지"}
 @media (max-width:860px){.optgrid,.struct,.ev-grid{grid-template-columns:1fr}.opt,.struct > div,.ev-grid > div{border-right:0;border-bottom:1px solid var(--ink)}.opt:last-child,.struct > div:last-child,.ev-grid > div:last-child{border-bottom:0}.vs{grid-template-columns:1fr}.vs .arrow{display:none}.seg{grid-template-columns:1fr}.seg .sl{border-right:0;border-bottom:1px solid var(--line)}}
-@media (pointer:coarse){.opt{padding:14px}.plan-topic input{font-size:18px}}
+@media (pointer:coarse){.opt{padding:11px 12px}.plan-topic input{font-size:18px}}
 </style>
 </head>
 <body>
@@ -838,7 +840,7 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
       </section>
 
       <section class="card pvcard">
-        <div class="card-h"><h2>PPT 미리보기</h2><span class="meta">선택</span></div>
+        <div class="card-h"><h2>PPT</h2><span class="meta" id="slide-count">선택</span></div>
         <div class="pv-slide">
           <div class="pv-frame" id="pv-frame"></div>
           <div class="pv-bar">
@@ -846,27 +848,15 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
             <span class="pv-cnt num" id="pv-scnt">—</span>
             <button class="pv-nav" id="pv-snext" aria-label="다음 슬라이드">›</button>
             <span class="pv-sp"></span>
-            <button class="btn ghost sm" id="pv-add">PPT·PDF 넣기</button>
+            <button class="btn ghost sm" id="pv-add">PPT·PDF·이미지 넣기</button>
             <button class="btn ghost sm" id="pv-sample">샘플 PPT</button>
           </div>
           <div class="pv-gs"><input id="pv-gs" type="url" placeholder="구글 슬라이드 링크 붙여넣기" aria-label="구글 슬라이드 링크"><button class="btn sec sm" id="pv-gs-go">연결</button></div>
         </div>
-        <div class="pv-script" style="padding:14px 16px"><div class="plan-sum" id="plan-sum"></div></div>
+        <div class="film pv-film hidden" id="film"><div id="thumbs" style="display:contents"></div></div>
+        <input type="file" id="file" accept=".pdf,.ppt,.pptx,image/*,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint" multiple class="hidden">
       </section>
     </div>
-
-    <section class="card sect">
-      <div class="card-h"><h2>슬라이드</h2><span class="meta" id="slide-count">선택 · 없으면 단계 이름이 자동으로 표시돼요</span></div>
-      <div class="film">
-        <button class="drop" id="drop">+ PDF·이미지 첨부<small>PPTX · PDF · 이미지</small></button>
-        <div id="thumbs" style="display:contents"></div>
-      </div>
-      <div class="gs">
-        <input id="gs-url" type="url" placeholder="구글 슬라이드 링크 붙여넣기 (공유: 링크가 있는 모든 사용자)">
-        <button class="btn sec sm" id="gs-go">연결</button>
-      </div>
-      <input type="file" id="file" accept=".pdf,.ppt,.pptx,image/*,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint" multiple class="hidden">
-    </section>
   </div>
 </div>
 
@@ -1023,16 +1013,13 @@ function stageCue(i){
 function savePlan(){ store.set('rsp-plan', S.plan); renderPlan(); updateChecks(); }
 function renderPlan(){
   const p = patOf();
-  $('#p-pattern').innerHTML = PATTERNS.map(x=>`<button type="button" class="opt" data-p="${x.id}" aria-pressed="${x.id===S.plan.pattern}"><b>${x.en}<small>${x.k}</small></b><span class="d">${x.d}</span><em>${esc(x.sig)}</em></button>`).join('');
-  $('#p-sup').innerHTML = SUPPORTS.map(x=>`<button type="button" class="opt" data-s="${x.id}" aria-pressed="${S.plan.supports.includes(x.id)}"><b>${x.en}<small>${x.k}</small></b><span class="d">${x.d}</span></button>`).join('');
-  $('#p-struct').innerHTML = SECS.map((s,i)=>{ const c = stageCue(i); return `<div><div class="m"><i style="background:${s.hex}"></i><b>${i+1}. ${s.k}</b><small>${s.en}</small></div><p>${esc(c.t)}<span class="sg">${esc(c.sg)}</span></p></div>`; }).join('');
+  $('#p-pattern').innerHTML = PATTERNS.map(x=>`<button type="button" class="opt" data-p="${x.id}" aria-pressed="${x.id===S.plan.pattern}"><b>${x.en}<small>${x.k}</small></b></button>`).join('');
+  $('#p-sup').innerHTML = SUPPORTS.map(x=>`<button type="button" class="opt" data-s="${x.id}" aria-pressed="${S.plan.supports.includes(x.id)}"><b>${x.en}<small>${x.k}</small></b></button>`).join('');
+  $('#p-struct').innerHTML = SECS.map((s,i)=>{ const c = stageCue(i); return `<div><div class="m"><i style="background:${s.hex}"></i><b>${i+1}. ${s.k}</b><small>${s.en}</small></div><p>${esc(c.t)}</p></div>`; }).join('');
   const rt=$('#req-topic'), rp=$('#req-pattern'), rs=$('#req-sup');
   rt.textContent = S.plan.topic.trim().length>=3 ? '✓' : '필수'; rt.classList.toggle('ok', S.plan.topic.trim().length>=3);
   rp.textContent = p ? '✓ '+p.en : '필수'; rp.classList.toggle('ok', !!p);
   rs.textContent = S.plan.supports.length>=2 ? '✓ 2개' : `${S.plan.supports.length}/2개`; rs.classList.toggle('ok', S.plan.supports.length>=2);
-  const sum = $('#plan-sum'); if (sum) sum.innerHTML = planOk()
-    ? `<span><b>${esc(S.plan.topic.trim())}</b></span><span class="pill"><i style="background:var(--s1)"></i>${p.en}</span>${supsOf().map(x=>`<span class="pill"><i style="background:var(--s3)"></i>${x.en}</span>`).join('')}`
-    : '<span>발표 설계를 마치면 여기에 요약이 보여요. 조직 방식은 <b>하나</b>, 뒷받침 자료는 <b>두 가지</b>예요.</span>';
   if ($('#p-topic').value !== S.plan.topic) $('#p-topic').value = S.plan.topic;
 }
 $('#p-topic').addEventListener('input', e=>{ S.plan.topic = e.target.value; store.set('rsp-plan', S.plan); const rt=$('#req-topic'); rt.textContent = S.plan.topic.trim().length>=3 ? '✓' : '필수'; rt.classList.toggle('ok', S.plan.topic.trim().length>=3); clearTimeout(window.__pt); window.__pt = setTimeout(()=>{ renderPlan(); updateChecks(); }, 250); });
@@ -1041,12 +1028,9 @@ $('#p-sup').addEventListener('click', e=>{ const b = e.target.closest('[data-s]'
 const planText = () => { const p=patOf(); return `Topic: ${S.plan.topic.trim()||'(none)'} | Pattern: ${p?p.en:'(none)'} | Supports: ${supsOf().map(x=>x.en).join(', ')||'(none)'}`; };
 
 /* slides */
-const drop = $('#drop'), fileIn = $('#file');
-drop.addEventListener('click', ()=> fileIn.click());
-drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.classList.add('over'); });
-drop.addEventListener('dragleave', ()=> drop.classList.remove('over'));
-drop.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('over'); handleFiles(e.dataTransfer.files); });
+const fileIn = $('#file');
 fileIn.addEventListener('change', ()=>{ handleFiles(fileIn.files); fileIn.value=''; });
+{ const fr = $('#pv-frame'); fr.addEventListener('dragover', e=>{ e.preventDefault(); fr.classList.add('over'); }); fr.addEventListener('dragleave', ()=> fr.classList.remove('over')); fr.addEventListener('drop', e=>{ e.preventDefault(); fr.classList.remove('over'); handleFiles(e.dataTransfer.files); }); }
 function bufToB64(buf){ const u = new Uint8Array(buf); let out = ''; for (let k=0;k<u.length;k+=0x8000) out += String.fromCharCode.apply(null, u.subarray(k, k+0x8000)); return btoa(out); }
 function b64ToBuf(b){ const s2 = atob(b), u = new Uint8Array(s2.length); for (let k=0;k<s2.length;k++) u[k] = s2.charCodeAt(k); return u.buffer; }
 function pvLoading(msg){ const fr = document.getElementById('pv-frame'); if (fr) fr.innerHTML = `<div class="pv-load"><div class="spin"></div>${esc(msg)}</div>`; }
@@ -1068,7 +1052,6 @@ async function loadGSlides(url){
   }
   renderThumbs();
 }
-$('#gs-go').addEventListener('click', ()=>{ const u = $('#gs-url').value.trim(); $('#gs-url').value=''; loadGSlides(u); });
 async function handleFiles(files){
   const list = [...files]; if (!list.length) return;
   S.slides = [];
@@ -1111,7 +1094,7 @@ function renderThumbs(){
     t.appendChild(d);
   });
   if (typeof renderPvSlide==='function') renderPvSlide();
-  $('#slide-count').textContent = S.slides.length ? (S.slides[0].isIframe ? '구글 슬라이드 연결됨' : `${S.slides.length}장`) : '선택 · 없으면 단계 이름이 자동으로 표시돼요';
+  $('#slide-count').textContent = S.slides.length ? (S.slides[0].isIframe ? '구글 슬라이드 연결됨' : `${S.slides.length}장`) : '선택'; $('#film').classList.toggle('hidden', !S.slides.length || !!S.slides[0].isIframe);
 }
 
 /* media */
@@ -1919,7 +1902,7 @@ let pvSlide = 0, pvSec = 0;
 function fitText(el, max, min){ let f = max; el.style.fontSize = f + 'px'; while (f > min && el.scrollHeight > el.clientHeight + 1) { f -= 1; el.style.fontSize = f + 'px'; } }
 function renderPvSlide(){
   const fr = $('#pv-frame'), n = S.slides.length;
-  if (!n) { fr.innerHTML = '<div class="pv-empty"><b>PPT가 아직 없어요</b>PPT 파일(.pptx), PDF, 이미지, 구글 슬라이드 링크를 넣을 수 있어요<br>먼저 보고 싶으면 \'샘플 PPT\'를 눌러요</div>'; $('#pv-scnt').textContent = '—'; $('#pv-sprev').disabled = $('#pv-snext').disabled = true; return; }
+  if (!n) { fr.innerHTML = '<div class="pv-empty"><b>PPT 없음</b>없으면 무대에 5단계 큐카드가 보여요</div>'; $('#pv-scnt').textContent = '—'; $('#pv-sprev').disabled = $('#pv-snext').disabled = true; return; }
   pvSlide = Math.max(0, Math.min(n-1, pvSlide)); const sl = S.slides[pvSlide];
   fr.innerHTML = sl.isIframe ? `<iframe src="${sl.url}" allowfullscreen></iframe>` : `<img src="${sl.url}" alt="슬라이드 ${pvSlide+1}">`;
   $('#pv-scnt').textContent = sl.isIframe ? '구글' : `${pvSlide+1} / ${n}`;
