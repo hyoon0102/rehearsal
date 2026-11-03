@@ -779,7 +779,6 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
     <header class="phead">
       <div class="eyebrow">2026학년도 · 영어 발표와 토론 · 2학기 2차 수행평가 · Informative Speech</div>
       <h1>영어 발표와 토론<br><span class="hl">말하기 수행평가 리허설</span></h1>
-      <p class="desc">대본은 쓰지 않아요. 주제와 조직 방식, 뒷받침 자료만 정하고 카메라 앞에서 바로 말해요. 끝나면 말한 내용을 글자로 바꿔 서론·본론 1·2·3·결론 구조, 조직 방식, 뒷받침 자료가 제대로 들어갔는지 레벨로 알려줍니다.</p>
       <div class="pills">
         <span class="pill"><i style="background:var(--s4)"></i>최소 2:00 이상</span>
         <span class="pill"><i style="background:var(--s1)"></i>서론 · 본론 1·2·3 · 결론</span>
@@ -805,20 +804,20 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
     <!-- ①②③ 단계 패널 -->
     <section class="steps" aria-label="진행 단계">
       <div class="steps-row">
-        <button class="step" id="st1" data-go="plan"><span class="no">1</span><span class="t">발표 설계</span><span class="d">주제 · 조직 방식 1개 · 뒷받침 자료 2개 이상</span><span class="st"></span></button>
+        <button class="step" id="st1" data-go="plan"><span class="no">1</span><span class="t">발표 설계</span><span class="d">제목 · 조직 방식 1 · 뒷받침 자료 2</span><span class="st"></span></button>
         <button class="step" id="st2" data-go="cam"><span class="no">2</span><span class="t">카메라·마이크 확인</span><span class="d">얼굴이 보이고 음량 막대가 움직이면 준비 완료</span><span class="st"></span></button>
-        <button class="step" id="st3" data-go="start"><span class="no">3</span><span class="t">리허설 → AI 평가</span><span class="d">3초 카운트다운 후 녹화, 종료하면 말한 내용을 글자로 바꿔 평가</span><span class="st"></span></button>
+        <button class="step" id="st3" data-go="start"><span class="no">3</span><span class="t">리허설 → AI 평가</span><span class="d">종료하면 전사 → 레벨 평가</span><span class="st"></span></button>
       </div>
-      <div class="shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>영상과 얼굴은 이 기기 밖으로 나가지 않아요. 시선·표정 분석도 이 기기 안에서 해요. 선생님 구글 시트에는 발표 설계, 리허설 숫자, 말한 내용(전사), AI 평가, 성찰 답변이 저장돼요. AI 평가(Claude)에는 전사된 글자와 숫자만 가고 이름은 가지 않아요. 챗봇 대화는 선생님께 기록돼요.</div>
+      <div class="shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>영상·얼굴은 이 기기 밖으로 나가지 않아요 · 시트에는 설계·숫자·전사·AI 평가·성찰만 저장돼요</div>
     </section>
 
     <section class="card sect" id="plan-card" style="margin-top:26px">
-      <div class="card-h"><h2>발표 설계</h2><span class="meta">대본은 쓰지 않아요 · 여기서 고른 설계와 실제로 말한 내용을 비교해 평가해요</span><span class="coach-btns"><span class="meta" id="plan-st"></span><button class="icon-btn" id="btn-set" aria-label="선생님 시트 연결"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button></span></div>
+      <div class="card-h"><h2>발표 설계</h2><span class="meta">제목 · 조직 방식 1 · 뒷받침 자료 2</span><span class="coach-btns"><span class="meta" id="plan-st"></span><button class="icon-btn" id="btn-set" aria-label="선생님 시트 연결"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button></span></div>
       <div class="plan">
-        <label class="plan-topic"><span class="pl">발표 제목 <small>Title · 영어로 한 줄 · 수행평가지의 제목과 같게</small><span class="req" id="req-topic">필수</span></span><input id="p-topic" placeholder="예: From Farm to Cup: The Journey of Coffee" autocomplete="off"></label>
-        <div><div class="pl">조직 방식 <small>Organizational pattern · 하나만</small><span class="req" id="req-pattern">필수</span></div><div class="optgrid" id="p-pattern" role="radiogroup" aria-label="조직 방식"></div></div>
-        <div><div class="pl">뒷받침 자료 <small>Supporting materials · 5가지 중 두 가지를 골라 본론에 녹여 넣기</small><span class="req" id="req-sup">2개 선택</span></div><div class="optgrid" id="p-sup" aria-label="뒷받침 자료"></div></div>
-        <div><div class="pl">발표 구조 <small>이 순서로 말해요 · 고른 조직 방식에 맞춰 본론 안내가 바뀌어요</small></div><div class="struct" id="p-struct"></div></div>
+        <label class="plan-topic"><span class="pl">발표 제목 <small>Title · 영어로</small><span class="req" id="req-topic">필수</span></span><input id="p-topic" placeholder="예: From Farm to Cup: The Journey of Coffee" autocomplete="off"></label>
+        <div><div class="pl">조직 방식 <small>Organizational pattern</small><span class="req" id="req-pattern">필수</span></div><div class="optgrid" id="p-pattern" role="radiogroup" aria-label="조직 방식"></div></div>
+        <div><div class="pl">뒷받침 자료 <small>Supporting materials · 2가지</small><span class="req" id="req-sup">2개 선택</span></div><div class="optgrid" id="p-sup" aria-label="뒷받침 자료"></div></div>
+        <div><div class="pl">발표 구조</div><div class="struct" id="p-struct"></div></div>
       </div>
     </section>
 
@@ -839,7 +838,7 @@ mark.mk-pat{background:transparent;color:inherit;text-decoration:underline dotte
       </section>
 
       <section class="card pvcard">
-        <div class="card-h"><h2>PPT 미리보기</h2><span class="meta">선택 · 화살표로 넘겨 보며 미리 연습해요</span></div>
+        <div class="card-h"><h2>PPT 미리보기</h2><span class="meta">선택</span></div>
         <div class="pv-slide">
           <div class="pv-frame" id="pv-frame"></div>
           <div class="pv-bar">
@@ -1707,7 +1706,7 @@ function evalPayload(R, A){
 function renderEvalGate(){
   const box = $('#ai-rep'); if (!box) return;
   const ready = !!C.server && stu().full;
-  box.innerHTML = `<div class="card-h"><h2>AI 평가 · Informative Speech</h2><span class="meta">전사된 발화만 보고 구조·조직 방식·뒷받침 자료·연결을 4단계로 평가해요 · 이름은 보내지 않아요</span></div>
+  box.innerHTML = `<div class="card-h"><h2>AI 평가 · Informative Speech</h2><span class="meta">전사 기준 · 4단계 레벨</span></div>
     <div class="ai-gate"><p>${ready ? '말한 내용을 글자로 바꿔 평가를 준비하고 있어요…' : (!C.server ? '선생님 서버 주소가 연결되면 평가할 수 있어요.' : '클래스·반·번호·이름을 넣으면 평가할 수 있어요.')}</p>
     ${ready ? '' : '<button class="btn sec" id="ai-set">연결 설정</button>'}</div>`;
   if (!ready) $('#ai-set').onclick = openSettings;
@@ -1739,7 +1738,7 @@ function renderEval(E, R){
   const found = su.found || [], distinct = su.count_distinct != null ? su.count_distinct : new Set(found.map(f=>f.type)).size;
   const segs = (E.segments || []);
   box.innerHTML = `
-    <div class="card-h"><h2>AI 평가 · Informative Speech</h2><span class="meta">전사된 발화만 보고 평가 · 인용은 실제로 말한 문장</span><button class="btn ghost sm act" id="ai-redo">다시 평가</button></div>
+    <div class="card-h"><h2>AI 평가 · Informative Speech</h2><span class="meta">전사 기준 · 인용은 실제 발화</span><button class="btn ghost sm act" id="ai-redo">다시 평가</button></div>
     <div class="ev-top"><div class="big">${lvTag(o.level)}<small>종합 · ${LV[Math.max(1,Math.min(4,Math.round(+o.level||1)))][1]}</small></div><p>${esc(o.summary||'')}</p></div>
     <div class="ev-grid">
       <div><div class="l">① 구조 · 5단계${lvTag(st.level)}</div><p>${esc(st.comment||'')}</p></div>
