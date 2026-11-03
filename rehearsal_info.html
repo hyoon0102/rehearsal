@@ -1533,6 +1533,11 @@ function finalize(R){
 
     <section class="card sect" id="ai-rep" style="margin-top:22px"></section>
 
+    <section class="card sect" id="tr-card">
+      <div class="card-h"><h2>실제로 말한 내용</h2><span class="meta" id="tr-meta">단어 ${R.heard.length}개</span></div>
+      <div id="tr-body"><div class="cmp" style="grid-template-columns:1fr"><div><div class="b">${esc(spoken) || '인식된 음성 없음 · 마이크 권한·서버 연결 확인'}</div></div></div></div>
+    </section>
+
     <div class="brief key" style="margin:22px 0 0"><span class="brief-t"><b>전달에서 가장 먼저 고칠 한 가지 · ${axes[first]}</b><br>${tips[first]}</span></div>
 
     <div class="rgrid">
@@ -1546,25 +1551,12 @@ function finalize(R){
     ${growthHTML}
     ${exprHTML}
 
-    <section class="card sect" id="reflect">
-      <div class="card-h"><h2>나의 성찰</h2></div>
-      <div class="rf">
-        <label class="rf-q"><span><b>1</b>지난번보다 바꾼 것</span><textarea id="rf1" rows="2"></textarea></label>
-        <label class="rf-q"><span><b>2</b>아직 어려운 것</span><textarea id="rf2" rows="2"></textarea></label>
-        <label class="rf-q"><span><b>3</b>다음에 할 것</span><textarea id="rf3" rows="2"></textarea></label>
-      </div>
-      <div class="rf-foot"><span class="meta" id="rf-st"></span><button class="btn" id="rf-go">선생님께 제출</button></div>
-    </section>
 
     <div class="rmid">
       <section class="card"><div class="card-h"><h2>전달 역량</h2></div><svg class="radar" viewBox="0 0 300 300" role="img" aria-label="전달 역량 그래프">${radarSVG(sc,300,axes)}</svg></section>
       <section class="card"><div class="card-h"><h2>전달 피드백</h2></div><div class="fb">${items.map(x=>`<div class="fb-item"><i class="k" style="background:${x.c}"></i><h3>${x.h}</h3><p>${x.p}</p></div>`).join('')}</div></section>
     </div>
 
-    <section class="card sect" id="tr-card">
-      <div class="card-h"><h2>실제로 말한 내용</h2><span class="meta" id="tr-meta">단어 ${R.heard.length}개</span></div>
-      <div id="tr-body"><div class="cmp" style="grid-template-columns:1fr"><div><div class="b">${esc(spoken) || '인식된 음성 없음 · 마이크 권한·서버 연결 확인'}</div></div></div></div>
-    </section>
 
     <section class="card sect">
       <div class="card-h"><h2>영상 셀프 리뷰</h2></div>
@@ -1589,7 +1581,7 @@ function finalize(R){
     </div>`;
   $('#again').onclick = ()=>beginRun();
   setupVideo(R);
-  S.lastRun = { R, A }; $('#rf-go').onclick = submitReflect;
+  S.lastRun = { R, A };
   renderEvalGate();
   logRun(R, A, axes[first] + ': ' + tips[first].replace(/<[^>]+>/g,'')).then(()=>{ if (C.server && stu().full) runInfoEval(); });
   $('#edit').onclick = ()=>{ showView('ready'); setTimeout(()=>$('#plan-card').scrollIntoView({behavior:'smooth'}),100); };
@@ -1688,7 +1680,7 @@ function evalPayload(R, A){
 function renderEvalGate(){
   const box = $('#ai-rep'); if (!box) return;
   const ready = !!C.server && stu().full;
-  box.innerHTML = `<div class="card-h"><h2>AI 평가</h2></div>
+  box.innerHTML = `<div class="card-h"><h2>실제로 말한 내용 분석</h2></div>
     <div class="ai-gate"><p>${ready ? '준비 중…' : (!C.server ? '선생님 서버 연결 필요' : '클래스·반·번호·이름 입력 필요')}</p>
     ${ready ? '' : '<button class="btn sec" id="ai-set">연결 설정</button>'}</div>`;
   if (!ready) $('#ai-set').onclick = openSettings;
@@ -1696,8 +1688,8 @@ function renderEvalGate(){
 async function runInfoEval(){
   const box = $('#ai-rep'), L = S.lastRun; if (!L || !box) return;
   const tr = transcriptOf(L.R);
-  if (words(tr).length < 15) { box.innerHTML = '<div class="card-h"><h2>AI 평가</h2></div><div class="coach-err">인식된 말이 너무 적어서 평가할 수 없어요 (단어 ' + words(tr).length + '개). 마이크 권한과 선생님 서버 연결을 확인하고 다시 리허설해 주세요.</div>'; return; }
-  box.innerHTML = '<div class="card-h"><h2>AI 평가</h2></div><div class="coach-wait"><div class="spin"></div>평가 중 · 15–30초</div>';
+  if (words(tr).length < 15) { box.innerHTML = '<div class="card-h"><h2>실제로 말한 내용 분석</h2></div><div class="coach-err">인식된 말이 너무 적어서 평가할 수 없어요 (단어 ' + words(tr).length + '개). 마이크 권한과 선생님 서버 연결을 확인하고 다시 리허설해 주세요.</div>'; return; }
+  box.innerHTML = '<div class="card-h"><h2>실제로 말한 내용 분석</h2></div><div class="coach-wait"><div class="spin"></div>평가 중 · 15–30초</div>';
   try {
     const r = await fetch(C.server, { method:'POST', body: JSON.stringify(evalPayload(L.R, L.A)) });
     const d = await r.json();
@@ -1706,7 +1698,7 @@ async function runInfoEval(){
     const st = $('#log-st'); if (st && d.saved) st.textContent = (st.textContent ? st.textContent + ' · ' : '') + 'AI 평가 시트 저장됨';
     if (d.result.next_step) saveAiMission(d.result.next_step);
   } catch(e) {
-    box.innerHTML = `<div class="card-h"><h2>AI 평가</h2></div><div class="coach-err">평가하지 못했어요. ${esc(e.message||e)}</div><div style="padding:0 0 4px"><button class="btn sec sm" id="ai-retry">다시 시도</button></div>`;
+    box.innerHTML = `<div class="card-h"><h2>실제로 말한 내용 분석</h2></div><div class="coach-err">분석하지 못했어요. ${/401|x-api-key/.test(String(e.message||e)) ? '선생님 서버의 AI 키가 아직 연결되지 않았어요. 선생님께 알려 주세요.' : esc(e.message||e)}</div><div style="padding:0 0 4px"><button class="btn sec sm" id="ai-retry">다시 시도</button></div>`;
     $('#ai-retry').onclick = runInfoEval;
   }
 }
@@ -1719,32 +1711,42 @@ function renderEval(E, R){
   const declared = p ? p.en : '(선택 안 함)', det = pa.detected || '판단 어려움', match = !!pa.matches_declared;
   const found = su.found || [], distinct = su.count_distinct != null ? su.count_distinct : new Set(found.map(f=>f.type)).size;
   const segs = (E.segments || []);
+  const fb = E.feedback || {};
+  const tnorm = t => String(t||'').toLowerCase().replace(/[^a-z]/g,'').replace(/s$/,'');
+  const usedOf = id => { const sp = SUPPORTS.find(x=>x.id===id); const hit = found.filter(f=>tnorm(f.type)===tnorm(sp.en)); const best = hit.find(f=>f.integrated==='yes') || hit.find(f=>f.integrated==='partial') || hit[0]; return { sp, best }; };
+  const supRows = supsOf().map(x=>{ const u = usedOf(x.id), f = u.best;
+    const verdict = !f ? '<span class="ok-n">안 들림</span>' : ynp(f.integrated);
+    return `<tr><td><b>${esc(x.en)}</b></td><td>${verdict}</td><td>${f && f.quote ? `<span class="quote">“${esc(f.quote)}”</span>` : '<span style="color:var(--muted)">근거로 볼 부분 없음</span>'}</td><td>${esc(f ? (f.note||'') : '말한 내용에서 이 종류의 자료가 들리지 않았어요')}</td></tr>`; }).join('');
+  const extra = found.filter(f=>!supsOf().some(x=>tnorm(x.en)===tnorm(f.type)));
+  const extraRows = extra.map(f=>`<tr><td><b>${esc(f.type||'')}</b><br><small style="color:var(--muted)">고르지 않았지만 들림</small></td><td>${ynp(f.integrated)}</td><td><span class="quote">“${esc(f.quote||'')}”</span></td><td>${esc(f.note||'')}</td></tr>`).join('');
+  const supOk = supsOf().filter(x=>{ const f = usedOf(x.id).best; return f && f.integrated!=='no'; }).length;
   box.innerHTML = `
-    <div class="card-h"><h2>AI 평가</h2><button class="btn ghost sm act" id="ai-redo">다시 평가</button></div>
-    <div class="ev-top"><div class="big">${lvTag(o.level)}<small>종합 · ${LV[Math.max(1,Math.min(4,Math.round(+o.level||1)))][1]}</small></div><p>${esc(o.summary||'')}</p></div>
-    <div class="ev-grid">
-      <div><div class="l">① 구조 · 5단계${lvTag(st.level)}</div><p>${esc(st.comment||'')}</p></div>
-      <div><div class="l">② 조직 방식${lvTag(pa.level)}</div><p>${esc(pa.comment||'')}</p></div>
-      <div><div class="l">③ 뒷받침 자료${lvTag(su.level)}</div><p>${esc(su.comment||'')}</p></div>
-      <div><div class="l">④ 연결·명확성${lvTag(la.level)}</div><p>${esc(la.comment||'')}</p></div>
-    </div>
+    <div class="card-h"><h2>실제로 말한 내용 분석</h2><span class="meta">말한 내용(전사) 기준 · 인용은 실제로 말한 문장</span><button class="btn ghost sm act" id="ai-redo">다시 분석</button></div>
 
-    <div class="ev-sec"><div class="h">② 조직 방식 · 내가 고른 것 vs 실제로 들린 것${lvTag(pa.level)}</div>
-      <div class="vs"><div><div class="k">내가 고른 방식</div><div class="v">${esc(declared)}</div></div><div class="arrow">→</div><div><div class="k">AI가 전사에서 감지한 방식</div><div class="v">${esc(det)}<small>확신 ${esc({high:'높음',medium:'중간',low:'낮음'}[pa.confidence]||pa.confidence||'')}</small><span class="match ${match?'ok':'no'}">${match ? '일치' : '불일치'}</span></div></div></div>
-      <div class="b">${(pa.evidence||[]).map(q=>`<span class="quote">“${esc(q)}”</span>`).join('') || '<p style="color:var(--muted)">조직 방식을 보여 주는 연결어·구조 신호가 뚜렷하게 들리지 않았어요.</p>'}${pa.question ? `<p class="q"><b>Q.</b> ${esc(pa.question)}</p>` : ''}</div></div>
+    <div class="ev-sec" style="margin-top:0"><div class="h">조직 방식 · 내가 고른 것 vs AI 판단${lvTag(pa.level)}</div>
+      <div class="vs"><div><div class="k">내가 고른 방식</div><div class="v">${esc(declared)}</div></div><div class="arrow">→</div><div><div class="k">AI가 말한 내용에서 판단한 방식</div><div class="v">${esc(det)}<small>확신 ${esc({high:'높음',medium:'중간',low:'낮음'}[pa.confidence]||pa.confidence||'')}</small><span class="match ${match?'ok':'no'}">${match ? '같음' : '다름'}</span></div></div></div>
+      <div class="b"><p><b>판단 이유</b> · ${esc(pa.comment||'')}</p><p style="margin-top:8px"><b>근거</b></p>${(pa.evidence||[]).map(q=>`<span class="quote">“${esc(q)}”</span>`).join('') || '<p style="color:var(--muted)">조직 방식을 보여 주는 연결어·구조 신호가 들리지 않았어요.</p>'}</div></div>
 
-    <div class="ev-sec"><div class="h">③ 뒷받침 자료 · 서로 다른 종류 ${distinct}개 감지 <span style="color:var(--muted);font-weight:600">(기준 2가지 · 내가 고른 것: ${supsOf().map(x=>x.en).join(', ')||'-'})</span>${lvTag(su.level)}</div>
-      <div class="b">${found.length ? `<table class="evtab"><thead><tr><th style="width:150px">종류</th><th>실제로 말한 부분</th><th style="width:90px">녹아듦</th><th style="width:30%">판단</th></tr></thead><tbody>${found.map(f=>`<tr><td><b>${esc(f.type||'')}</b>${f.declared===false?'<br><small style="color:var(--muted)">고르지 않았던 종류</small>':''}</td><td class="q">“${esc(f.quote||'')}”</td><td>${ynp(f.integrated)}</td><td>${esc(f.note||'')}</td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--muted)">뒷받침 자료로 볼 수 있는 부분이 들리지 않았어요.</p>'}
-      ${(su.missing_declared||[]).length ? `<p style="margin-top:8px"><b>고르고 안 쓴 것</b> · ${su.missing_declared.map(esc).join(', ')}</p>` : ''}${su.question ? `<p class="q"><b>Q.</b> ${esc(su.question)}</p>` : ''}</div></div>
+    <div class="ev-sec"><div class="h">뒷받침 자료 · 내가 고른 것 vs AI 판단 <span style="color:var(--muted);font-weight:600">· 고른 2가지 중 ${supOk}가지 확인</span>${lvTag(su.level)}</div>
+      <div class="b"><table class="evtab"><thead><tr><th style="width:140px">내가 고른 것</th><th style="width:90px">AI 판단</th><th>근거 (실제로 말한 부분)</th><th style="width:30%">이유</th></tr></thead><tbody>${supRows}${extraRows}</tbody></table>${su.comment ? `<p style="margin-top:8px">${esc(su.comment)}</p>` : ''}</div></div>
 
-    <div class="ev-sec"><div class="h">① 구조 · 서론 → 본론 1·2·3 → 결론${lvTag(st.level)}</div>
+    <div class="ev-sec"><div class="h">전반적인 피드백${lvTag(o.level)}</div>
+      <div class="b"><p>${esc(o.summary||'')}</p>
+        ${(fb.strengths||[]).length ? `<p style="margin-top:10px"><b>잘한 점</b></p>${fb.strengths.map(x=>`<p>· ${esc(x)}</p>`).join('')}` : ''}
+        ${(fb.improvements||[]).length ? `<p style="margin-top:10px"><b>고칠 점</b></p>${fb.improvements.map(x=>`<p>· ${esc(x)}</p>`).join('')}` : ''}
+        <div class="ev-grid" style="margin-top:12px">
+          <div><div class="l">구조 5단계${lvTag(st.level)}</div><p>${esc(st.comment||'')}</p></div>
+          <div><div class="l">조직 방식${lvTag(pa.level)}</div><p>${match ? '고른 방식대로 들렸어요' : '고른 방식과 다르게 들렸어요'}</p></div>
+          <div><div class="l">뒷받침 자료${lvTag(su.level)}</div><p>고른 2가지 중 ${supOk}가지 확인</p></div>
+          <div><div class="l">연결·명확성${lvTag(la.level)}</div><p>${esc(la.comment||'')}</p></div>
+        </div></div></div>
+
+    <div class="ev-sec"><div class="h">구조 · 서론 → 본론 1·2·3 → 결론${lvTag(st.level)}</div>
       <div class="b"><table class="evtab"><tbody>
         <tr><td style="width:150px"><b style="color:var(--s0)">서론</b></td><td>${chk(intro.hook,'주의 끌기')}${chk(intro.thesis,'주제·중심 생각')}${chk(intro.preview,'요점 미리 말하기')}${intro.quote ? `<span class="quote">“${esc(intro.quote)}”</span>` : ''}</td></tr>
         ${[0,1,2].map(i=>{ const b=bodies[i]||{}; return `<tr><td><b style="color:var(--s${i+1})">본론 ${i+1}</b></td><td>${b.point ? `<b>${esc(b.point)}</b>` : '<span style="color:var(--muted)">뚜렷한 요점이 들리지 않았어요</span>'}${b.quote ? `<span class="quote">“${esc(b.quote)}”</span>` : ''}</td></tr>`; }).join('')}
         <tr><td><b style="color:var(--s4)">결론</b></td><td>${chk(con.summary,'요약')}${chk(con.closer,'기억에 남는 마무리')}${con.quote ? `<span class="quote">“${esc(con.quote)}”</span>` : ''}</td></tr>
-      </tbody></table>${st.question ? `<p class="q"><b>Q.</b> ${esc(st.question)}</p>` : ''}</div></div>
-
-    <div class="ev-sec"><div class="h">④ 연결어·명확성${lvTag(la.level)}</div><div class="b">${(la.transitions||[]).length ? `<p><b>들린 연결어</b> · ${la.transitions.map(t=>`<span class="chk y">${esc(t)}</span>`).join('')}</p>` : ''}${la.question ? `<p class="q"><b>Q.</b> ${esc(la.question)}</p>` : ''}</div></div>
+      </tbody></table></div></div>
 
     ${E.next_step ? `<div class="brief next ev-next"><span class="brief-t">${esc(E.next_step)}</span></div>` : ''}`;
   $('#ai-redo').onclick = runInfoEval;
