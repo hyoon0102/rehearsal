@@ -11,30 +11,30 @@
 <style>
 /* Layout: 시험지 테마(면접온 스타일) — 수험표 띠 + 지시문 상자 + ①②③ 칸 + 문항 카드. 아이보리 종이, 직각, 진한 1px 칸 테두리, 세리프 제목, 형광펜은 글자 밑에만 */
 :root{
-  --bg:#F6F4EE;--card:#FFFDF8;--ink:#1D1D1F;--line:#D9D4C7;--line2:#1D1D1F;
-  --text:#1D1D1F;--muted:#6B675E;--faint:#B3AEA2;
-  --btn:#1D1D1F;--btn-text:#FFFDF8;--soft:#EDEAE1;
-  --hl:#FFE45C;--blue:#1F4FD1;--blue-bg:#FFFDF8;
-  --ok:#2F7D3A;--ok-bg:#E6F0E2;--warn:#A9521A;--warn-bg:#F7E9DA;--bad:#B42318;--bad-bg:#F6E1DE;
-  --s0:#2F5FD0;--s1:#6A4FB8;--s2:#C2365B;--s3:#C27A12;--s4:#2F7D3A;
+  --bg:#E9EDF2;--card:#FBFCFD;--ink:#14213D;--line:#C9D1DC;--line2:#14213D;
+  --text:#14213D;--muted:#5B6678;--faint:#A6B0BF;
+  --btn:#14213D;--btn-text:#FBFCFD;--soft:#DEE4EC;
+  --hl:#B9E6C5;--blue:#1B4D8C;--blue-bg:#FBFCFD;
+  --ok:#2F6B4F;--ok-bg:#E1F0E6;--warn:#9A4E12;--warn-bg:#F6E6D6;--bad:#A8231B;--bad-bg:#F5E0DD;
+  --s0:#1B4D8C;--s1:#5A4AA8;--s2:#B23A62;--s3:#B86E10;--s4:#2F6B4F;
   --r:2px;--r-sm:2px;
-  --stage:#F6F4EE;--stage2:#FFFDF8;--stage-line:#1D1D1F;--stage-text:#1D1D1F;--stage-muted:#6B675E;
-  --tok-off:#B3AEA2;--tok-on:#1D1D1F;
+  --stage:#E9EDF2;--stage2:#FBFCFD;--stage-line:#14213D;--stage-text:#14213D;--stage-muted:#5B6678;
+  --tok-off:#A6B0BF;--tok-on:#14213D;
   --font:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   --serif:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo",Batang,serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
   --ease:cubic-bezier(.2,.8,.2,1);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#171613;--card:#1F1E1A;--ink:#EDE9DE;--line:#3A3832;--line2:#EDE9DE;--text:#EDE9DE;--muted:#A39E91;--faint:#5E5A51;
-  --btn:#EDE9DE;--btn-text:#171613;--soft:#2A2924;--hl:rgba(255,214,51,.38);--blue:#7FA2FF;--blue-bg:#1F1E1A;
-  --ok:#7CC48A;--ok-bg:#1E2E20;--warn:#E3A06A;--warn-bg:#33251A;--bad:#F08A7E;--bad-bg:#3A1E1B;
-  --stage:#171613;--stage2:#1F1E1A;--stage-line:#EDE9DE;--stage-text:#EDE9DE;--stage-muted:#A39E91;--tok-off:#5E5A51;--tok-on:#EDE9DE;color-scheme:dark}}
+  --bg:#11161E;--card:#1A212C;--ink:#E4E9F0;--line:#2E3745;--line2:#E4E9F0;--text:#E4E9F0;--muted:#98A3B3;--faint:#55606F;
+  --btn:#E4E9F0;--btn-text:#11161E;--soft:#222B38;--hl:rgba(94,196,130,.32);--blue:#8BB4F2;--blue-bg:#1A212C;
+  --ok:#7CC9A0;--ok-bg:#1B2D25;--warn:#E6A96E;--warn-bg:#33271B;--bad:#F08A7E;--bad-bg:#3A1E1B;
+  --stage:#11161E;--stage2:#1A212C;--stage-line:#E4E9F0;--stage-text:#E4E9F0;--stage-muted:#98A3B3;--tok-off:#55606F;--tok-on:#E4E9F0;color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#171613;--card:#1F1E1A;--ink:#EDE9DE;--line:#3A3832;--line2:#EDE9DE;--text:#EDE9DE;--muted:#A39E91;--faint:#5E5A51;
-  --btn:#EDE9DE;--btn-text:#171613;--soft:#2A2924;--hl:rgba(255,214,51,.38);--blue:#7FA2FF;--blue-bg:#1F1E1A;
-  --ok:#7CC48A;--ok-bg:#1E2E20;--warn:#E3A06A;--warn-bg:#33251A;--bad:#F08A7E;--bad-bg:#3A1E1B;
-  --stage:#171613;--stage2:#1F1E1A;--stage-line:#EDE9DE;--stage-text:#EDE9DE;--stage-muted:#A39E91;--tok-off:#5E5A51;--tok-on:#EDE9DE;color-scheme:dark}
+  --bg:#11161E;--card:#1A212C;--ink:#E4E9F0;--line:#2E3745;--line2:#E4E9F0;--text:#E4E9F0;--muted:#98A3B3;--faint:#55606F;
+  --btn:#E4E9F0;--btn-text:#11161E;--soft:#222B38;--hl:rgba(94,196,130,.32);--blue:#8BB4F2;--blue-bg:#1A212C;
+  --ok:#7CC9A0;--ok-bg:#1B2D25;--warn:#E6A96E;--warn-bg:#33271B;--bad:#F08A7E;--bad-bg:#3A1E1B;
+  --stage:#11161E;--stage2:#1A212C;--stage-line:#E4E9F0;--stage-text:#E4E9F0;--stage-muted:#98A3B3;--tok-off:#55606F;--tok-on:#E4E9F0;color-scheme:dark}
 
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -50,13 +50,13 @@ h1,h2,h3{margin:0;font-family:var(--serif);font-weight:700;letter-spacing:-.01em
 /* top bar */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;height:58px;display:flex;align-items:center;gap:12px;padding:0 20px;background:var(--bg);border-bottom:1px solid var(--ink)}
 .wordmark{font-family:var(--serif);font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;white-space:nowrap}
-.wordmark i{width:10px;height:10px;background:var(--ink)}
+.wordmark i{width:10px;height:10px;background:var(--ok)}
 .stepper{margin:0 auto;display:flex;border:1px solid var(--ink)}
 .chip{border:0;border-right:1px solid var(--ink);background:transparent;padding:7px 16px;font-size:14px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px}
 .chip:last-child{border-right:0}
 .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--faint)}
 .chip.on{background:var(--ink);color:var(--bg)}
-.chip.on .dot{background:var(--hl)}
+.chip.on .dot{background:#7CC9A0}
 .chip.done .dot{background:var(--ok)}
 .chip.on.done .dot{background:var(--hl)}
 .icon-btn{border:1px solid var(--ink);background:var(--card);width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0}
@@ -685,6 +685,24 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 .nos .sup{margin-top:14px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .nos .sup span{font-size:12px;border:1px solid var(--ink);padding:2px 9px;font-weight:700;color:var(--stage-text);letter-spacing:0;text-transform:none}
 .sd{cursor:pointer}
+
+/* 무대 큐카드 (PPT 없을 때): 5단계 전체 + 현재 단계 강조 */
+.cuecard{width:100%;max-width:720px;border:1px solid var(--ink);background:var(--card);text-align:left;display:flex;flex-direction:column;max-height:100%;overflow:auto}
+.cc-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;padding:10px 14px;border-bottom:1px solid var(--ink);background:var(--soft)}
+.cc-h b{font-family:var(--serif);font-size:17px}
+.cc-h span{font-size:12.5px;color:var(--muted);font-weight:700}
+.cue-row{display:grid;grid-template-columns:10px 112px 1fr;gap:10px;align-items:start;padding:9px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.cue-row:last-child{border-bottom:0}
+.cue-row i{width:8px;height:8px;border-radius:50%;margin-top:7px}
+.cue-row .cr-m b{display:block;font-family:var(--serif);font-size:15px;line-height:1.3}
+.cue-row .cr-m small{font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.cue-row .cr-t{font-size:13.5px;line-height:1.5;color:var(--muted);word-break:keep-all}
+.cue-row .cr-t .sg{display:block;font-family:var(--mono);font-size:12px;margin-top:3px;opacity:.85}
+.cue-row.cur{background:var(--ink);color:var(--bg)}
+.cue-row.cur .cr-m small,.cue-row.cur .cr-t{color:var(--bg);opacity:.92}
+.cue-row.cur .cr-t{font-size:15px}
+.cue-row.cur .cr-t .sg{color:#7CC9A0}
+@media (max-width:860px){.cue-row{grid-template-columns:10px 1fr}.cue-row .cr-t{grid-column:2}}
 /* AI 평가 */
 .lv{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);padding:2px 9px;font-size:12.5px;font-weight:700;font-family:var(--font);white-space:nowrap}
 .lv b{font-family:var(--serif);font-size:15px}
@@ -754,7 +772,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
 <div class="view on" id="v-ready">
   <div class="wrap">
     <header class="phead">
-      <div class="eyebrow">2026학년도 · 영어 발표와 토론 · Informative Speech</div>
+      <div class="eyebrow">2026학년도 · 영어 발표와 토론 · 2학기 2차 수행평가 · Informative Speech</div>
       <h1>영어 발표와 토론<br><span class="hl">말하기 수행평가 리허설</span></h1>
       <p class="desc">대본은 쓰지 않아요. 주제와 조직 방식, 뒷받침 자료만 정하고 카메라 앞에서 바로 말해요. 끝나면 말한 내용을 글자로 바꿔 서론·본론 1·2·3·결론 구조, 조직 방식, 뒷받침 자료가 제대로 들어갔는지 레벨로 알려줍니다.</p>
       <div class="pills">
@@ -792,7 +810,7 @@ button,.btn,.chip,.clsbtn,.pv-nav,.sb{touch-action:manipulation}
     <section class="card sect" id="plan-card" style="margin-top:26px">
       <div class="card-h"><h2>발표 설계</h2><span class="meta">대본은 쓰지 않아요 · 여기서 고른 설계와 실제로 말한 내용을 비교해 평가해요</span><span class="coach-btns"><span class="meta" id="plan-st"></span><button class="icon-btn" id="btn-set" aria-label="선생님 시트 연결"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button></span></div>
       <div class="plan">
-        <label class="plan-topic"><span class="pl">발표 주제 <small>영어로 한 줄</small><span class="req" id="req-topic">필수</span></span><input id="p-topic" placeholder="예: How a cup of coffee travels from farm to cup" autocomplete="off"></label>
+        <label class="plan-topic"><span class="pl">발표 제목 <small>Title · 영어로 한 줄 · 수행평가지의 제목과 같게</small><span class="req" id="req-topic">필수</span></span><input id="p-topic" placeholder="예: From Farm to Cup: The Journey of Coffee" autocomplete="off"></label>
         <div><div class="pl">조직 방식 <small>Organizational pattern · 하나만</small><span class="req" id="req-pattern">필수</span></div><div class="optgrid" id="p-pattern" role="radiogroup" aria-label="조직 방식"></div></div>
         <div><div class="pl">뒷받침 자료 <small>Supporting materials · 두 가지 이상 골라서 본론에 녹여 넣기</small><span class="req" id="req-sup">2개 이상</span></div><div class="optgrid" id="p-sup" aria-label="뒷받침 자료"></div></div>
         <div><div class="pl">발표 구조 <small>이 순서로 말해요 · 고른 조직 방식에 맞춰 본론 안내가 바뀌어요</small></div><div class="struct" id="p-struct"></div></div>
@@ -928,15 +946,15 @@ const SECS = [
 ];
 /* 조직 방식 5가지 — 본론 1·2·3 안내는 고른 방식에 따라 바뀜 */
 const PATTERNS = [
-  {id:'topical', en:'Topical', k:'주제별', d:'주제를 서로 다른 하위 주제 셋으로 나눠 차례로', sig:'One aspect is… / Another is… / Finally…',
+  {id:'topical', en:'Topical', k:'주제별', d:'주제를 하위 항목으로 나누어 설명', sig:'One aspect is… / Another is… / Finally…',
    body:[['첫 하위 주제','The first aspect of … is…'],['두 번째 하위 주제','Another important aspect is…'],['세 번째 하위 주제','The last thing to know is…']]},
-  {id:'chronological', en:'Chronological', k:'시간 순서', d:'시간의 흐름이나 과정의 단계 순서대로', sig:'First… / Then… / Finally…',
+  {id:'chronological', en:'Chronological', k:'시간 순서', d:'시간이나 발생 순서에 따라 설명', sig:'First… / Then… / Finally…',
    body:[['처음·시작 단계','It all began when… / First,…'],['중간 단계','Then… / After that,…'],['마지막 단계·오늘','Finally… / Today,…']]},
-  {id:'spatial', en:'Spatial', k:'공간 순서', d:'위치·방향·구조를 따라 한 곳에서 다음 곳으로', sig:'At the top… / Moving to… / On the other side…',
+  {id:'spatial', en:'Spatial', k:'공간 순서', d:'위치나 공간의 순서에 따라 설명', sig:'At the top… / Moving to… / On the other side…',
    body:[['첫 위치','Let\'s start at… / On the left,…'],['다음 위치','Moving to the center,…'],['마지막 위치','Finally, at the far end,…']]},
-  {id:'compare', en:'Compare & Contrast', k:'비교·대조', d:'두 대상의 공통점과 차이점을 기준별로', sig:'Both… / In contrast… / While A…, B…',
+  {id:'compare', en:'Compare & Contrast', k:'비교·대조', d:'두 대상의 공통점과 차이점을 비교하여 설명', sig:'Both… / In contrast… / While A…, B…',
    body:[['비교 기준 1 — 공통점','Both A and B… / Similarly,…'],['비교 기준 2 — 차이점','In contrast,… / While A…, B…'],['비교 기준 3 — 차이점·판단','Unlike A, B… / On the other hand,…']]},
-  {id:'cause', en:'Cause & Effect', k:'원인·결과', d:'원인에서 결과로(또는 결과에서 원인으로) 이어서', sig:'Because… / As a result… / This leads to…',
+  {id:'cause', en:'Cause & Effect', k:'원인·결과', d:'원인과 결과의 관계를 중심으로 설명', sig:'Because… / As a result… / This leads to…',
    body:[['원인·배경','The main cause is… / Because…'],['결과·영향','As a result,… / This leads to…'],['또 다른 결과 또는 해결·전망','In addition,… / Consequently,…']]},
 ];
 /* 뒷받침 자료 5가지 — 2가지 이상을 본론에 녹여 넣기 */
@@ -945,7 +963,7 @@ const SUPPORTS = [
   {id:'example', en:'Example', k:'예시', d:'요점을 구체적으로 보이는 사례'},
   {id:'definition', en:'Definition', k:'정의', d:'핵심 용어의 뜻을 분명히 밝히기'},
   {id:'testimony', en:'Testimony', k:'전문가 인용', d:'전문가·기관의 말을 출처와 함께'},
-  {id:'stats', en:'Fact & Statistics', k:'사실·통계', d:'숫자·사실을 출처와 함께'},
+  {id:'stats', en:'Fact & Statistic', k:'사실·통계', d:'숫자·사실을 출처와 함께'},
 ];
 const LV = {4:['탁월','Excellent'], 3:['우수','Good'], 2:['발전 중','Developing'], 1:['시작 단계','Emerging']};
 const lvTag = n => { n = Math.max(1, Math.min(4, Math.round(+n||1))); return `<span class="lv l${n}"><b>${n}</b>${LV[n][0]}</span>`; };
@@ -1263,10 +1281,10 @@ function align(toks, heard){
 let slideIdx = 0;
 function showSlide(i){
   if (!S.slides.length) {
-    const ci = S.run ? S.run.curSec : 0, s = SECS[ci], c = stageCue(ci), p = patOf();
-    const sup = ci>=1 && ci<=3 ? `<div class="sup">${supsOf().map(x=>`<span>${x.en}</span>`).join('')}</div>` : '';
-    $('#slide-area').innerHTML = `<div class="nos"><b>${s.k}</b><span>${s.en}${p ? ' · ' + p.en : ''}</span><div class="cue">${esc(c.t)}<span class="sg">${esc(c.sg)}</span></div>${sup}</div>`;
-    $('#sn').textContent = '큐카드 · 단계 안내 (PPT가 없을 때)'; $('#snav').style.display='none'; return;
+    const ci = S.run ? S.run.curSec : 0, p = patOf();
+    const rows = SECS.map((s,i)=>{ const c = stageCue(i), cur = i===ci; return `<div class="cue-row ${cur?'cur':''}" data-sec="${i}"><i style="background:${s.hex}"></i><div class="cr-m"><b>${i+1}. ${s.k}</b><small>${s.en}</small></div><div class="cr-t">${esc(c.t)}<span class="sg">${esc(c.sg)}</span></div></div>`; }).join('');
+    $('#slide-area').innerHTML = `<div class="cuecard"><div class="cc-h"><b>${esc(S.plan.topic.trim() || '발표 제목')}</b><span>${p ? esc(p.en) : ''}${supsOf().length ? ' · ' + supsOf().map(x=>esc(x.en)).join(' · ') : ''}</span></div>${rows}</div>`;
+    $('#sn').textContent = '큐카드 · 화면을 보며 말해요 · 단계 이름을 누르면 이동'; $('#snav').style.display='none'; return;
   }
   slideIdx = Math.max(0, Math.min(S.slides.length-1, i));
   const sl = S.slides[slideIdx];
@@ -1277,6 +1295,7 @@ $('#sl-prev').addEventListener('click', ()=>showSlide(slideIdx-1));
 $('#sl-next').addEventListener('click', ()=>showSlide(slideIdx+1));
 const renderSecDots = cur => $('#secdots').innerHTML = SECS.map((s,i)=>`<span class="sd ${i===cur?'cur':''}" data-sec="${i}" title="${s.en}"><i style="background:${s.hex}"></i>${s.k}</span>`).join('');
 $('#secdots').addEventListener('click', e=>{ const d = e.target.closest('.sd'); if (d && S.run) freeStep(+d.dataset.sec - S.run.curSec); });
+$('#slide-area').addEventListener('click', e=>{ const d = e.target.closest('.cue-row'); if (d && S.run) freeStep(+d.dataset.sec - S.run.curSec); });
 
 $('#btn-start').addEventListener('click', beginRun);
 async function beginRun(){
