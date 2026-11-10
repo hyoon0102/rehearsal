@@ -235,7 +235,7 @@ h1,h2,h3{margin:0;font-family:var(--serif);font-weight:700;letter-spacing:-.01em
 .zone .fill{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--ink);opacity:.85}
 .zone .zl{display:flex;justify-content:space-between;font-size:11px;color:var(--stage-muted);margin-top:5px}
 .secdots{display:flex;flex-wrap:wrap;border:1px solid var(--ink)}
-.sd{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--stage-muted);padding:5px 10px;font-weight:600;border-right:1px solid var(--line)}
+.sd{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--stage-muted);padding:5px 10px;font-weight:600;border-right:1px solid var(--line)}
 .sd:last-child{border-right:0}
 .sd i{width:7px;height:7px;border-radius:50%}
 .sd.cur{color:var(--bg);background:var(--ink)}
@@ -1304,7 +1304,7 @@ function showSlide(i){
     const ci = S.run ? S.run.curSec : 0, p = patOf();
     const rows = SECS.map((s,i)=>{ const c = stageCue(i), cur = i===ci, me = isMine(i); return `<div class="cue-row ${cur?'cur':''} ${me?'':'them'}" data-sec="${i}"><i style="background:${s.hex}"></i><div class="cr-m"><b>${i+1}. ${s.k}</b><small>${me ? '내 차례' : '상대 · 듣기'}</small></div><div class="cr-t">${esc(c.t)}<span class="sg">${esc(c.sg)}</span></div></div>`; }).join('');
     $('#slide-area').innerHTML = `<div class="cuecard"><div class="cc-h"><b>${esc(S.plan.topic.trim() || '토론 주제')}</b><span>Speaker ${S.plan.role} · ${sideEn()} (${sideKo()})${S.plan.partner.trim() ? ' · 상대 ' + esc(S.plan.partner.trim()) : ''}</span></div>${rows}</div>`;
-    $('#sn').textContent = '말하는 사람이 바뀌면 다음 단계 · 단계를 눌러도 이동'; $('#snav').style.display='none'; return;
+    $('#sn').textContent = ''; $('#sn').style.display='none'; $('#snav').style.display='none'; { const cr = document.querySelector('.cue-row.cur'); if (cr) cr.scrollIntoView({block:'nearest', behavior:'smooth'}); } return;
   }
   slideIdx = Math.max(0, Math.min(S.slides.length-1, i));
   const sl = S.slides[slideIdx];
