@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>연수 관리 — 이수증 한 장이면 연수 체크와 보고 끝</title>
+<meta name="description" content="올해 들어야 할 연수를 한눈에 보고, 이수증 사진 한 장으로 이수 처리와 관리자 보고까지 끝내는 교사용 연수 관리 앱.">
+<meta property="og:title" content="연수 관리 — 이수증 찍으면 연수 체크와 관리자 보고 끝">
+<meta property="og:description" content="필수 연수 진도율, 마감일, 주기 연수 면제 계산, 관리자 시트 자동 전송">
+<meta property="og:image" content="https://hyoon0102.github.io/rehearsal/training_light.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFFFFF;--soft:#F5F5F7;--ink:#111111;--mut:#6E6E73;--line:#111111;--hair:#E5E5EA;--red:#D70015;--blue:#0071E3;--card:#FFFFFF}
+[data-theme=dark]{--bg:#111111;--soft:#1B1B1D;--ink:#F5F5F7;--mut:#98989D;--line:#F5F5F7;--hair:#2C2C2E;--red:#FF453A;--blue:#2997FF;--card:#161618}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Noto Sans CJK KR",-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:16px}
+.brand{font-weight:900;font-size:19px;letter-spacing:-.3px}
+.brand small{font-weight:500;color:var(--mut);font-size:13px;margin-left:8px}
+.menu{display:flex;gap:26px;font-size:15px;font-weight:500;color:var(--mut)}
+.menu a:hover{color:var(--ink)}
+.navr{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);font-weight:700;padding:11px 20px;border:1px solid var(--ink);font-size:15px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:hover{opacity:.85}
+.tog{width:40px;height:40px;border:1px solid var(--hair);background:var(--card);color:var(--ink);border-radius:10px;cursor:pointer;font-size:16px}
+/* hero */
+.hero{padding:84px 0 40px;text-align:center}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--hair);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:700;color:var(--mut);background:var(--card)}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block}
+h1{font-size:68px;line-height:1.12;font-weight:900;letter-spacing:-2px;margin:22px 0 18px}
+h1 .u{color:var(--red)}
+.lead{font-size:20px;color:var(--mut);max-width:680px;margin:0 auto}
+.lead b{color:var(--ink)}
+.cta{display:flex;gap:10px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--line);border-bottom:1px solid var(--hair);margin:56px auto 0;max-width:900px;text-align:left}
+.stat{padding:18px 20px;border-right:1px solid var(--hair)}.stat:last-child{border-right:0}
+.stat b{display:block;font-size:40px;font-weight:900;letter-spacing:-1px;line-height:1.1}
+.stat b small{font-size:16px;color:var(--mut);font-weight:700;margin-left:2px}
+.stat span{font-size:13px;color:var(--mut);font-weight:500}
+.shot{margin:48px auto 0;max-width:1060px;border:1px solid var(--hair);border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,0,0,.25);background:var(--card)}
+.shot .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--hair);background:var(--soft)}
+.shot .bar i{width:11px;height:11px;border-radius:50%;background:var(--hair);display:inline-block}
+.shot img{display:block;width:100%}
+.shot .dk{display:none}[data-theme=dark] .shot .lt{display:none}[data-theme=dark] .shot .dk{display:block}
+/* section */
+section{padding:96px 0;border-top:1px solid var(--hair)}
+.eyebrow{font-size:13px;font-weight:700;color:var(--mut);letter-spacing:2px}
+h2{font-size:42px;font-weight:900;letter-spacing:-1px;line-height:1.2;margin:8px 0 12px}
+.sub{color:var(--mut);font-size:17px;max-width:660px}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.fl{border:1px solid var(--hair);border-radius:14px;padding:26px;background:var(--card);position:relative}
+.fl .k{font-size:13px;font-weight:900;color:var(--bg);background:var(--ink);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.fl h3{font-size:22px;font-weight:900;margin:16px 0 6px}
+.fl p{color:var(--mut);font-size:15px}
+.fl .mock{margin-top:16px;border:1px dashed var(--hair);border-radius:10px;padding:12px 14px;font-size:13.5px;background:var(--soft)}
+.mock .row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--hair)}.mock .row:last-child{border:0}
+.mock .row span{color:var(--mut)}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--line);margin-top:40px}
+.f{padding:26px 22px 28px;border-bottom:1px solid var(--hair);border-right:1px solid var(--hair)}
+.f:nth-child(3n){border-right:0}
+.f h3{font-size:19px;font-weight:900;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.f h3 .t{font-size:11px;font-weight:900;color:var(--red);border:1px solid var(--red);border-radius:6px;padding:1px 6px}
+.f p{font-size:15px;color:var(--mut)}
+.note{margin-top:28px;border-left:4px solid var(--blue);background:color-mix(in srgb,var(--blue) 9%,var(--bg));border-radius:10px;padding:16px 20px;font-size:15px}
+.note b{font-weight:900}
+.story{display:grid;grid-template-columns:1fr 1.2fr;gap:48px;align-items:start}
+.story blockquote{font-size:24px;font-weight:700;line-height:1.55;letter-spacing:-.4px;border-left:4px solid var(--ink);padding-left:20px}
+.story p{color:var(--mut);font-size:16px;margin-bottom:14px}
+.faq{margin-top:34px;border-top:2px solid var(--line)}
+.faq details{border-bottom:1px solid var(--hair)}
+.faq summary{cursor:pointer;padding:20px 4px;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.faq summary::after{content:"+";font-size:22px;color:var(--mut);font-weight:400}
+.faq details[open] summary::after{content:"–"}
+.faq .a{padding:0 4px 22px;color:var(--mut);font-size:15.5px;max-width:860px}
+.faq .a b{color:var(--ink)}
+.last{padding:110px 0;border-top:1px solid var(--hair);text-align:center}
+.last h2{font-size:52px}
+footer{border-top:1px solid var(--hair);padding:26px 0;font-size:13px;color:var(--mut)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer a{text-decoration:underline}
+@media(max-width:900px){h1{font-size:44px}.menu{display:none}.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:0}.flow,.feat,.story{grid-template-columns:1fr}.f{border-right:0}h2{font-size:32px}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+ <a class="brand" href="#">연수 관리<small>2026학년도</small></a>
+ <div class="menu"><a href="#how">사용 방법</a><a href="#features">기능</a><a href="#story">만든 이유</a><a href="#faq">질문</a></div>
+ <div class="navr"><button class="tog" id="tog" title="다크 모드">☾</button><a class="btn" href="https://dukwon-training.netlify.app/">앱 열기 →</a></div>
+</div></nav>
+
+<header class="wrap hero">
+ <span class="pill"><i></i>마감 지난 연수, 이제 안 놓쳐요</span>
+ <h1>이수증 <span class="u">한 장</span>이면<br>연수 체크와 보고 끝.</h1>
+ <p class="lead">올해 들어야 할 연수를 한눈에 보고, 다 들으면 <b>이수증 사진만 올리세요.</b> 연수명·이수번호·이수일이 자동으로 채워지고, 관리자 시트로 바로 전달돼요.</p>
+ <div class="cta"><a class="btn" href="https://dukwon-training.netlify.app/">앱 열기 →</a><a class="btn ghost" href="#how">3단계로 보기</a></div>
+ <div class="stats">
+  <div class="stat"><b>16<small>개</small></b><span>올해 필수 연수 자동 정리</span></div>
+  <div class="stat"><b>12<small>개</small></b><span>법정의무 연수 따로 표시</span></div>
+  <div class="stat"><b>60<small>시간</small></b><span>연간 목표 이수 시간</span></div>
+  <div class="stat"><b>1<small>장</small></b><span>이수증 사진이면 처리 끝</span></div>
+ </div>
+ <div class="shot"><div class="bar"><i></i><i></i><i></i></div><img class="lt" src="training_light.jpg" alt="연수 관리 앱 메인 화면"><img class="dk" src="training_dark.jpg" alt="연수 관리 앱 다크 모드 화면"></div>
+</header>
+
+<section id="how"><div class="wrap">
+ <div class="eyebrow">HOW IT WORKS</div>
+ <h2>딱 3단계예요.</h2>
+ <p class="sub">처음 한 번 이름만 넣으면, 그다음부터는 연수 들을 때마다 사진 한 장.</p>
+ <div class="flow">
+  <div class="fl"><div class="k">1</div><h3>이름 한 번 입력</h3><p>앱을 열고 이름(과 부서)만 넣어요. 폰에서는 크롬 메뉴의 '홈 화면에 추가'로 앱처럼 써요.</p>
+   <div class="mock"><div class="row"><span>이름</span>홍길동</div><div class="row"><span>부서·학년</span>3학년부</div></div></div>
+  <div class="fl"><div class="k">2</div><h3>이수증 올리기</h3><p>사진으로 찍거나, 캡처해서 <b>Ctrl+V</b>로 붙여넣어요. PDF도, 여러 장 한 번에도 돼요.</p>
+   <div class="mock"><div class="row"><span>연수명</span>성인지교육</div><div class="row"><span>이수번호</span>자동 입력</div><div class="row"><span>이수일</span>자동 입력</div></div></div>
+  <div class="fl"><div class="k">3</div><h3>관리자에게 자동 전달</h3><p>체크되는 순간 관리자 구글 시트에 이름·연수명·이수번호가 쌓여요. 따로 보고할 필요 없어요.</p>
+   <div class="mock"><div class="row"><span>관리자 시트</span>+1행</div><div class="row"><span>이수증 사진</span>내 기기에만</div></div></div>
+ </div>
+ <div class="note"><b>이미 들은 연수는?</b> 네모만 체크하면 돼요. 이수증이 없어도 진도율에 바로 반영돼요.</div>
+</div></section>
+
+<section id="features"><div class="wrap">
+ <div class="eyebrow">FEATURES</div>
+ <h2>공문 뒤질 일이 없어요.</h2>
+ <p class="sub">법정의무, 3년·4년 주기 연수가 섞여 있어도 올해 뭘 언제까지 들어야 하는지 앱이 정리해요.</p>
+ <div class="feat">
+  <div class="f"><h3>진도율 · 남은 날짜<span class="t">킥</span></h3><p>필수 연수 진도율, 남은 개수, 마감까지 남은 날짜를 자동으로 정리. 마감 지난 건 빨간색으로.</p></div>
+  <div class="f"><h3>주기 연수 면제 계산<span class="t">킥</span></h3><p>3년·4년에 한 번 듣는 연수는 직전 이수 연도만 고르면 올해 면제인지 알아서 계산해요.</p></div>
+  <div class="f"><h3>이수증 자동 인식<span class="t">킥</span></h3><p>사진·캡처·PDF에서 연수명, 이수번호, 이수일을 읽어 채워요. 옮겨 적을 필요 없어요.</p></div>
+  <div class="f"><h3>관리자 시트 자동 전송</h3><p>체크하면 이름, 연수명, 이수번호가 관리자 구글 시트에 차곡차곡. 교무부는 시트만 보면 돼요.</p></div>
+  <div class="f"><h3>사진은 내 기기에만</h3><p>이수증 사진은 각자 기기에만 저장돼요. 관리자에게는 텍스트 기록만 가요.</p></div>
+  <div class="f"><h3>작은 디테일</h3><p>연수 검색(Ctrl+K), 되돌리기(Ctrl+Z), 다크 모드, 여러 장 한 번에 올리기, 백업 저장·불러오기.</p></div>
+ </div>
+</div></section>
+
+<section id="story"><div class="wrap story">
+ <div><div class="eyebrow">WHY</div><h2>제일 처음 만든 앱이에요.</h2>
+  <blockquote>"연수 듣는 것보다,<br>뭘 들었는지 정리하는 게<br>더 어렵더라고요."</blockquote></div>
+ <div>
+  <p>바이브코딩을 시작하면서 제일 처음 만든 게 이 연수 관리 프로그램이에요. 저는 연수를 끝까지 뭘 들었는지 안 들었는지 정리가 안 되는 타입이라서요.</p>
+  <p>법정의무 연수만 열 개가 넘고, 3년에 한 번, 4년에 한 번 듣는 연수까지 섞여 있어서 올해 뭘 언제까지 들어야 하는지 매번 공문을 뒤져야 했어요. 다 듣고 나서도 이수증을 캡처해 이수번호를 옮겨 적고, 담당 부서에 따로 보고해야 했고요.</p>
+  <p><b style="color:var(--ink)">선생님은 이수증 한 장만 올리면 끝, 관리자는 누가 무엇을 들었는지 바로 보이게.</b> 그게 이 앱의 전부예요.</p>
+ </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+ <div class="eyebrow">FAQ</div>
+ <h2>자주 묻는 질문</h2>
+ <div class="faq">
+  <details open><summary>다른 학교에서도 쓸 수 있나요?</summary><div class="a">지금 앱은 <b>덕원고 연수 목록 기준</b>이고, 체크하면 기록이 덕원고 관리 시트로 가요. 다른 학교 선생님은 둘러보기·아이디어 참고용으로 봐 주세요. 학교 이름과 연수 목록, 관리 시트 주소만 바꾸면 우리 학교용으로 바로 쓸 수 있게 만들어 뒀어요. 도름스 댓글로 남겨 주시면 구조를 공유할게요.</div></details>
+  <details><summary>이수증 사진이 관리자에게 가나요?</summary><div class="a">아니요. 사진은 <b>각자 기기에만</b> 저장되고, 관리자 시트에는 이름·연수명·이수번호·이수일만 가요.</div></details>
+  <details><summary>3년·4년 주기 연수는 어떻게 처리돼요?</summary><div class="a">해당 연수에서 <b>직전 이수 연도</b>만 고르면, 올해 들어야 하는지 면제인지 계산해서 '올해 면제' 탭으로 옮겨 줘요.</div></details>
+  <details><summary>폰에서도 되나요?</summary><div class="a">돼요. 크롬에서 열고 메뉴의 <b>'홈 화면에 추가'</b>를 누르면 앱처럼 써요. 연수 끝나고 바로 이수증 화면을 찍어 올리면 끝이에요.</div></details>
+  <details><summary>기기를 바꾸면 기록이 사라지나요?</summary><div class="a">기록은 기기에 저장돼서, 화면 아래 <b>'백업 저장'</b>으로 파일을 받아 두고 새 기기에서 <b>'백업 불러오기'</b>를 하면 그대로 옮겨져요. 관리자 시트 기록은 그대로 남아 있어요.</div></details>
+ </div>
+</div></section>
+
+<section class="last"><div class="wrap">
+ <h2>올해 남은 연수,<br>지금 확인해 보세요.</h2>
+ <p class="sub" style="margin:14px auto 30px">설치 없이 크롬에서 바로.</p>
+ <a class="btn" href="https://dukwon-training.netlify.app/" style="font-size:17px;padding:15px 28px">앱 열기 →</a>
+</div></section>
+
+<footer><div class="wrap"><span>연수 관리 · 덕원고 영어과 윤현진</span><span><a href="https://dorms.school/apps/f55ae46b-3ec3-4594-9732-db768c106b91">도름스에서 보기</a></span></div></footer>
+
+<script>
+const t=document.getElementById('tog'),r=document.documentElement;
+try{if(localStorage.getItem('tr-theme')==='dark')r.dataset.theme='dark'}catch(e){}
+const s=()=>t.textContent=r.dataset.theme==='dark'?'☀':'☾';s();
+t.onclick=()=>{if(r.dataset.theme==='dark')delete r.dataset.theme;else r.dataset.theme='dark';s();try{localStorage.setItem('tr-theme',r.dataset.theme||'light')}catch(e){}};
+</script>
+</body>
+</html>

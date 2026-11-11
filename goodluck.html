@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>덕원고 수능 대박 기원 — 잠깐 들어왔다 나가도 괜찮은 곳</title>
+<meta name="description" content="우리 학교를 그대로 옮긴 수능 응원 3D 공간. 로그인 없이 입장, 법당·성당·교회, 망월지 힐링, 응원 순한맛·매운맛, 시험고사장까지.">
+<meta property="og:title" content="덕원고 수능 대박 기원 메타버스">
+<meta property="og:description" content="수험생이 들어와 기원하고 쉬어 가는 우리 학교 3D 공간">
+<meta property="og:image" content="https://hyoon0102.github.io/rehearsal/goodluck_school.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1E2A4A;--ink:#1E2A4A;--mut:#5E6878;--card:#FFFFFF;--line:#E3E6EC;--sky:#CFE6F5;--sand:#F1E7D3;--red:#E5484D;--green:#2E9A5B}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{color:var(--ink);font-family:"Noto Sans KR","Noto Sans CJK KR",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;background:#F7F6F2}
+.j{font-family:"Jua","Noto Sans KR",sans-serif;font-weight:400}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px}
+.brand{font-size:22px}
+.menu{display:flex;gap:6px}
+.menu a{padding:6px 14px;border-radius:999px;font-size:14.5px;font-weight:700;color:var(--mut)}
+.menu a:hover{background:#EEF1F5;color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(30,42,74,.06)}
+.chip .d{color:var(--red)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--navy);color:#fff;font-weight:900;padding:14px 26px;border-radius:16px;font-size:17px;box-shadow:0 4px 0 #0E1630;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #0E1630}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 4px 0 var(--line);border:1px solid var(--line)}
+/* hero */
+.hero{background:linear-gradient(180deg,var(--sky) 0%,#E8F2F8 55%,var(--sand) 100%);padding:70px 0 0;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.25fr;gap:40px;align-items:center}
+.entry{background:rgba(255,255,255,.92);border-radius:28px;padding:30px 30px 26px;box-shadow:0 24px 50px -20px rgba(30,42,74,.25);text-align:center}
+.entry h1{font-size:46px;line-height:1.2;margin:4px 0 6px}
+.entry .lab{font-size:13px;color:var(--mut)}
+.nick{display:inline-block;margin:6px 0 18px;padding:10px 26px;border-radius:16px;background:#F3EFE6;border:1px solid #E4DCC9;font-size:30px;min-width:220px;cursor:pointer;user-select:none}
+.nick:hover{background:#EFE8D8}
+.entry .btn{width:100%}
+.entry .dd{margin-top:14px}
+.entry p.lead{font-size:15.5px;color:var(--mut);margin:16px 0 0;text-align:left}
+.hero .pic{border-radius:22px 22px 0 0;overflow:hidden;box-shadow:0 30px 60px -24px rgba(30,42,74,.35);align-self:end}
+.hero .pic img{display:block;width:100%}
+/* section */
+section{padding:90px 0}
+.eyebrow{font-size:13px;font-weight:900;color:var(--mut);letter-spacing:2px}
+h2{font-size:44px;line-height:1.25;margin:6px 0 10px}
+.sub{color:var(--mut);font-size:17px;max-width:680px}
+.rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:36px}
+.room{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;box-shadow:0 2px 0 var(--line)}
+.room .e{font-size:28px;line-height:1}
+.room h3{font-size:21px;margin:10px 0 2px}
+.room p{font-size:14px;color:var(--mut)}
+.room.hot{background:var(--navy);color:#fff;border-color:var(--navy)}
+.room.hot p{color:#C5CCDA}
+.gal{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:36px}
+.gal figure{background:var(--card);border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.gal img{display:block;width:100%}
+.gal figcaption{padding:14px 18px 18px}
+.gal figcaption b{font-family:"Jua",sans-serif;font-weight:400;font-size:22px;display:block}
+.gal figcaption span{color:var(--mut);font-size:15px}
+.kicks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px}
+.kk{background:var(--card);border-radius:20px;padding:24px;border:1px solid var(--line)}
+.kk .n{font-family:"Jua",sans-serif;font-size:40px;line-height:1;color:var(--navy)}
+.kk .n small{font-size:18px;color:var(--mut);margin-left:2px}
+.kk h3{font-size:19px;font-weight:900;margin:10px 0 4px}
+.kk p{font-size:14.5px;color:var(--mut)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
+.side{border-radius:22px;padding:28px}
+.side.mild{background:#EAF4FF;border:1px solid #CFE3F7}
+.side.spicy{background:#FFF0EC;border:1px solid #F6D3C9}
+.side h3{font-size:28px}
+.side p{color:var(--mut);margin-top:6px}
+.blocks{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.blocks span{background:#2A1E1E;color:#fff;font-family:"Jua",sans-serif;font-size:20px;padding:6px 14px;border-radius:8px;transform:rotate(-3deg);cursor:pointer;transition:transform .15s,opacity .3s}
+.blocks span:nth-child(2n){transform:rotate(4deg)}
+.blocks span.boom{transform:scale(1.6) rotate(20deg);opacity:0}
+.angel{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.angel div{background:#fff;border-radius:14px;padding:10px 14px;font-size:15px;box-shadow:0 2px 0 #CFE3F7}
+.story{display:grid;grid-template-columns:1fr 1.3fr;gap:44px}
+.story blockquote{font-family:"Jua",sans-serif;font-size:30px;line-height:1.45;color:var(--navy)}
+.story p{color:var(--mut);margin-bottom:14px;font-size:16px}
+.story p b{color:var(--ink)}
+.tech{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.tech span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:700}
+.faq{margin-top:30px;display:flex;flex-direction:column;gap:10px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:18px}
+.faq summary{cursor:pointer;padding:18px 22px;font-weight:900;font-size:17px;list-style:none;display:flex;justify-content:space-between}
+.faq summary::after{content:"+";color:var(--mut);font-weight:400;font-size:22px}
+.faq details[open] summary::after{content:"–"}
+.faq .a{padding:0 22px 20px;color:var(--mut);font-size:15.5px}
+.faq .a b{color:var(--ink)}
+.last{text-align:center;background:linear-gradient(180deg,#F7F6F2,var(--sky));padding:100px 0}
+.last h2{font-size:52px}
+footer{padding:26px 0;font-size:13px;color:var(--mut);background:var(--sky)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer a{text-decoration:underline}
+@media(max-width:900px){.hero .wrap,.gal,.duo,.story{grid-template-columns:1fr}.rooms{grid-template-columns:repeat(2,1fr)}.kicks{grid-template-columns:1fr}.menu{display:none}h2{font-size:34px}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+ <a class="brand j" href="#">🏫 덕원고 수능 대박</a>
+ <div class="menu"><a href="#rooms">공간</a><a href="#look">둘러보기</a><a href="#cheer">응원</a><a href="#story">만든 이유</a><a href="#faq">질문</a></div>
+ <span class="chip">수능 <span class="d" id="dd1">D-8</span> · 11.19 목</span>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+ <div class="entry">
+  <div class="lab">잠깐 들어왔다 나가도 괜찮은 곳</div>
+  <h1 class="j">덕원고 수능 대박 기원</h1>
+  <div class="lab">오늘 너의 별명 · 눌러서 바꿔 보기</div>
+  <div class="nick j" id="nick">기적사냥꾼</div>
+  <a class="btn" href="https://dukwongoodluck.netlify.app/">대박 기원 입장하기 →</a>
+  <div class="dd"><span class="chip">로그인 없음 · 학번 없음 · 입력창 없음</span></div>
+  <p class="lead">우리 학교를 그대로 옮긴 3D 공간이에요. 들어가서 절하고, 물멍하고, 불안 블록을 부수고, 시험장 공기를 미리 느껴 보고 나와요. 누가 들어왔는지는 몰라도 <b style="color:var(--ink)">나와 같은 마음인 친구들이 보여요.</b></p>
+ </div>
+ <div class="pic"><img src="goodluck_school.jpg" alt="덕원고 전경을 옮긴 3D 메타버스 화면"></div>
+</div></header>
+
+<section id="rooms"><div class="wrap">
+ <div class="eyebrow">ROOMS</div>
+ <h2 class="j">문 열고 들어가는 방 12개</h2>
+ <p class="sub">복도에서 문을 고르거나, 왼쪽 위 메뉴에서 바로 이동해요. 같은 방에 있는 친구의 별명·걷기·절하기가 실시간으로 보여요.</p>
+ <div class="rooms">
+  <div class="room"><div class="e">🏫</div><h3 class="j">학교 전경</h3><p>정문·본관, 멀리 갓바위. 밤엔 창문 불이 켜져요</p></div>
+  <div class="room"><div class="e">🏃</div><h3 class="j">운동장</h3><p>몸 풀고 하늘 보는 곳</p></div>
+  <div class="room hot"><div class="e">🐸</div><h3 class="j">망월지 힐링</h3><p>물멍, 20초 명상, 물수제비, 유등. 두꺼비가 개굴</p></div>
+  <div class="room"><div class="e">🚪</div><h3 class="j">복도</h3><p>문을 골라 들어가는 허브</p></div>
+  <div class="room"><div class="e">🪷</div><h3 class="j">법당</h3><p>108배, 염주, 범종, 처마 풍경</p></div>
+  <div class="room"><div class="e">⛪</div><h3 class="j">성당</h3><p>묵주 59알, 초 켜고 기도</p></div>
+  <div class="room"><div class="e">✝️</div><h3 class="j">교회</h3><p>종탑 줄을 당기면 종이 울려요</p></div>
+  <div class="room"><div class="e">🙏</div><h3 class="j">종교대통합</h3><p>엿 던지기, 찹쌀떡, 포크로 답안지 찍기</p></div>
+  <div class="room"><div class="e">📚</div><h3 class="j">자습실</h3><p>과목별 타이머, 수능 영단어, 오늘 급식</p></div>
+  <div class="room hot"><div class="e">📝</div><h3 class="j">시험고사장</h3><p>수능 당일 시간표대로 움직이는 교실</p></div>
+  <div class="room"><div class="e">👼</div><h3 class="j">응원 순한맛</h3><p>천사가 내려와 토닥토닥</p></div>
+  <div class="room hot"><div class="e">🔥</div><h3 class="j">응원 매운맛</h3><p>불안 블록 부수기, 폭죽, 호통</p></div>
+ </div>
+</div></section>
+
+<section id="look" style="padding-top:0"><div class="wrap">
+ <div class="eyebrow">LOOK AROUND</div>
+ <h2 class="j">실제 화면</h2>
+ <div class="gal">
+  <figure><img src="goodluck_pond.jpg" alt="망월지 힐링 화면"><figcaption><b>망월지 힐링</b><span>학교 옆 두꺼비 서식지를 그대로. 제 최애 스팟이에요.</span></figcaption></figure>
+  <figure><img src="goodluck_exam.jpg" alt="시험고사장 화면"><figcaption><b>시험고사장</b><span>서울 시간 그대로. 2교시 수학이면 화면 속 교실도 수학 시간.</span></figcaption></figure>
+  <figure><img src="goodluck_temple.jpg" alt="법당 화면"><figcaption><b>법당</b><span>절하기, 108배, 염주, 연등. 켜진 초는 오늘 하루 모두에게 보여요.</span></figcaption></figure>
+  <figure><img src="goodluck_entry.jpg" alt="입장 화면"><figcaption><b>입장</b><span>다섯 글자 별명이 자동으로. 1,225가지 조합이라 거의 안 겹쳐요.</span></figcaption></figure>
+ </div>
+</div></section>
+
+<section id="cheer" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
+ <div class="eyebrow">CHEER</div>
+ <h2 class="j">응원도 골라 먹어요.</h2>
+ <p class="sub">말로 "괜찮아"라고 하는 것보다 직접 부수는 쪽이 효과가 있다고 봤어요. 반대편 방에서는 천사가 토닥여 줘요. 아래 블록, 눌러 보세요.</p>
+ <div class="duo">
+  <div class="side mild"><h3 class="j">👼 응원 순한맛</h3><p>천사가 내려와 따뜻한 말 한마디. 걱정을 골라 종이공으로 구겨 던지면 위로가 돌아와요.</p>
+   <div class="angel"><div>오늘까지 버틴 너, 이미 충분히 잘하고 있어.</div><div>모르는 문제는 다른 사람도 몰라. 넘어가도 돼.</div></div></div>
+  <div class="side spicy"><h3 class="j">🔥 응원 매운맛</h3><p>불안·졸음·마킹실수 같은 단어 블록이 떠다녀요. 탭하면 산산조각, 10개마다 폭죽.</p>
+   <div class="blocks" id="blocks"><span>불안</span><span>졸음</span><span>마킹실수</span><span>변명</span><span>긴장</span><span>포기</span><span>지각</span></div></div>
+ </div>
+ <div class="kicks">
+  <div class="kk"><div class="n j">1,000<small>+</small></div><h3>요일별 응원 문구</h3><p>방 8개 × 요일별 20개. 월요일은 시작, 수요일은 중간 점검, 주말은 쉬어 가는 말.</p></div>
+  <div class="kk"><div class="n j">1,225<small>가지</small></div><h3>랜덤 별명</h3><p>"합격요정님", "최초합예약"처럼 다섯 글자. 한 번 받은 별명은 계속 유지돼요.</p></div>
+  <div class="kk"><div class="n j">0<small>개</small></div><h3>입력창</h3><p>익명 입력창을 주면 무슨 일이 생기는지 알기에 다 뺐어요. 문구는 골라서 보내요.</p></div>
+ </div>
+</div></section>
+
+<section id="story"><div class="wrap story">
+ <div><div class="eyebrow">WHY</div><h2 class="j">무슨 말을 건네야 할지<br>몰라서 만들었어요.</h2>
+  <blockquote>"응원한다는 말이<br>어색할 땐,<br>공간을 건네기로."</blockquote></div>
+ <div>
+  <p>수능을 앞둔 고3 교실은 묘해요. 아이들은 지쳐 있는데 쉴 수도 없고, 불안한데 그 얘기를 꺼내면 더 불안해져요. 무슨 말을 건네야 할지도, 말을 걸기도 어렵더라고요.</p>
+  <p>그러다 온라인 절 '산사'를 보고, <b>우리 학교를 배경으로 한 공간</b>을 만들어 주면 좋겠다 싶었어요. 학교 사진은 네이버 지도와 직접 찍은 사진을 바탕으로 만들었고, 선생님들과 수능 기도를 갔던 갓바위도 멀리 넣었어요.</p>
+  <p>시험고사장은 서울 시간을 그대로 따라가요. 수능 당일 그 시각에 들어가면 교실이 똑같이 움직이고, 점심시간엔 도시락이 올라와 있어요. 시험장은 돌아가고 있다는 걸, 미리 몸으로 느껴 보게요.</p>
+  <div class="tech"><span>Three.js 단일 HTML</span><span>Netlify 무료</span><span>Firebase 실시간 접속</span><span>나이스 급식 API</span><span>Web Audio 합성음</span><span>총 비용 0원</span></div>
+ </div>
+</div></section>
+
+<section id="faq" style="padding-top:0"><div class="wrap">
+ <div class="eyebrow">FAQ</div>
+ <h2 class="j">자주 묻는 질문</h2>
+ <div class="faq">
+  <details open><summary>우리 학교 버전도 만들 수 있나요?</summary><div class="a">네. 단일 HTML 파일이라 <b>학교 건물 모델, 학교 이름, 급식용 교육청·학교 코드</b>만 바꾸면 돼요. 급식은 코드만 바꾸면 그대로 받아와요. 도름스 댓글이나 쪽지로 물어보시면 알려 드릴게요.</div></details>
+  <details><summary>덕원고 학생만 들어갈 수 있나요?</summary><div class="a">아니요. 링크만 있으면 <b>누구나</b> 들어와요. 다른 학교 학생, N수생, 학부모, 선생님 모두 환영이에요.</div></details>
+  <details><summary>아이들이 이상한 글을 남기면요?</summary><div class="a">글을 쓰는 입력창이 <b>하나도 없어요.</b> 응원과 소원은 미리 넣어 둔 문구 중에서 고르기만 해요. 이름 대신 랜덤 별명이라 누가 누군지도 안 보여요.</div></details>
+  <details><summary>소리나 음악 저작권은요?</summary><div class="a">음원 파일을 하나도 안 썼어요. 범종, 풍경, 폭죽 소리까지 전부 <b>Web Audio로 코드에서 합성</b>했어요.</div></details>
+  <details><summary>폰·태블릿에서도 되나요?</summary><div class="a">돼요. 아이들이 태블릿으로 많이 들어와서, 블록 부수기처럼 탭으로 하는 작은 게임을 넣었어요.</div></details>
+ </div>
+</div></section>
+
+<section class="last"><div class="wrap">
+ <h2 class="j">수능까지 <span id="dd2">D-8</span>.<br>잠깐 쉬었다 가요.</h2>
+ <p class="sub" style="margin:12px auto 30px">로그인 없이 바로 입장.</p>
+ <a class="btn" href="https://dukwongoodluck.netlify.app/">대박 기원 입장하기 →</a>
+</div></section>
+
+<footer><div class="wrap"><span>덕원고 수능 대박 기원 · 덕원고 영어과 윤현진</span><span><a href="https://dorms.school/apps/0eec7ad6-6be6-4e9a-bcb3-21bd3882f7c0">도름스에서 보기</a></span></div></footer>
+
+<script>
+// live D-day (KST)
+(function(){const now=new Date(Date.now()+9*36e5),t=Date.UTC(2026,10,19),d=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+const n=Math.round((t-d)/864e5),s=n>0?'D-'+n:n===0?'D-DAY':'D+'+(-n);['dd1','dd2'].forEach(i=>document.getElementById(i).textContent=s)})();
+// nickname reroll
+const A=['기적','합격','만점','최초합','수능','대박','행운','찍기','불꽃','꿀잠'],B=['사냥꾼','요정님','예약','은내꺼','장인','천재','부적','기운','도사','주인공'];
+document.getElementById('nick').onclick=e=>{let s;do{s=A[Math.random()*A.length|0]+B[Math.random()*B.length|0]}while(s.length!==5);e.target.textContent=s};
+// smash blocks
+let c=0;document.querySelectorAll('#blocks span').forEach(b=>b.onclick=()=>{b.classList.add('boom');c++;setTimeout(()=>{b.classList.remove('boom')},1400)});
+</script>
+</body>
+</html>
