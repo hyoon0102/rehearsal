@@ -1685,7 +1685,12 @@ function renderEvalGate(){
     ${ready ? '' : '<button class="btn sec" id="ai-set">연결 설정</button>'}</div>`;
   if (!ready) $('#ai-set').onclick = openSettings;
 }
-async function runInfoEval(){
+/* AI 평가가 끝내 실패하면 선생님 시트 '오류 로그'에 남김 (학생 화면에는 영향 없음) */
+function reportEvalFail(task, msg){
+  try { const x = stu(); fetch(C.server, { method:'POST', body: JSON.stringify({ task:'evalfail', kind:task, cls:x.cls, grade:x.grade, ban:x.ban, no:x.no, name:x.name, cha:$('#t-cha').value, runId:(S.lastRun && S.lastRun.R && S.lastRun.R.runId) || '', msg:String(msg||'').slice(0,500), ua:navigator.userAgent.slice(0,120) }) }).catch(()=>{}); } catch(_) {}
+}
+async function runInfoEval(attempt){
+  attempt = (typeof attempt === 'number') ? attempt : 0;
   const box = $('#ai-rep'), L = S.lastRun; if (!L || !box) return;
   const tr = transcriptOf(L.R);
   if (words(tr).length < 15) { box.innerHTML = '<div class="card-h"><h2>실제로 말한 내용 분석</h2></div><div class="coach-err">인식된 말이 너무 적어서 평가할 수 없어요 (단어 ' + words(tr).length + '개). 마이크 권한과 선생님 서버 연결을 확인하고 다시 리허설해 주세요.</div>'; return; }
@@ -1698,8 +1703,14 @@ async function runInfoEval(){
     const st = $('#log-st'); if (st && d.saved) st.textContent = (st.textContent ? st.textContent + ' · ' : '') + 'AI 평가 시트 저장됨';
     if (d.result.next_step) saveAiMission(d.result.next_step);
   } catch(e) {
+    const why = String(e && e.message || e);
+    if (attempt < 1 && !/401|x-api-key|너무 적어/.test(why)) {   // 한 번은 자동으로 다시 시도
+      box.innerHTML = '<div class="card-h"><h2>실제로 말한 내용 분석</h2></div><div class="coach-wait"><div class="spin"></div>한 번 더 시도하는 중…</div>';
+      setTimeout(()=>runInfoEval(attempt + 1), 4000); return;
+    }
+    reportEvalFail('infoeval', why);
     box.innerHTML = `<div class="card-h"><h2>실제로 말한 내용 분석</h2></div><div class="coach-err">분석하지 못했어요. ${/401|x-api-key/.test(String(e.message||e)) ? '선생님 서버의 AI 키가 아직 연결되지 않았어요. 선생님께 알려 주세요.' : esc(e.message||e)}</div><div style="padding:0 0 4px"><button class="btn sec sm" id="ai-retry">다시 시도</button></div>`;
-    $('#ai-retry').onclick = runInfoEval;
+    $('#ai-retry').onclick = ()=>runInfoEval(0);
   }
 }
 const ynp = v => v==='yes' ? '<span class="ok-y">녹아듦</span>' : v==='partial' ? '<span class="ok-p">부분</span>' : '<span class="ok-n">언급만</span>';
@@ -1749,7 +1760,7 @@ function renderEval(E, R){
       </tbody></table></div></div>
 
     ${E.next_step ? `<div class="brief next ev-next"><span class="brief-t">${esc(E.next_step)}</span></div>` : ''}`;
-  $('#ai-redo').onclick = runInfoEval;
+  $('#ai-redo').onclick = ()=>runInfoEval(0);
   // 구간별 전사
   const tb = $('#tr-body'), tm = $('#tr-meta');
   if (tb && segs.length) {
