@@ -7601,7 +7601,8 @@ JSZip 3.10.1 (jszip.js), MIT or GPLv3 dual license; used under MIT. Copyright St
  const recs=()=>{try{return (typeof state!=='undefined'&&state.records)||[]}catch{return []}};
  const sentKey=()=>P+'sheet-sent:'+sid();
  const sentMap=()=>{try{return JSON.parse(st.get(sentKey())||'{}')}catch{return {}}};
- const text=r=>(r.transcript||r.liveTranscript||r.note||'').trim();
+ const strip=(t,q)=>{t=t.replace(/^\s*[가-힣]{1,3}\s*번째\s*질문입니다\s*/,'');const qs=(q||'').replace(/[^가-힣A-Za-z0-9]/g,'');if(!qs)return t;let i=0,j=0;while(i<t.length&&j<qs.length){const c=t[i];if(!/[가-힣A-Za-z0-9]/.test(c)){i++;continue}if(c!==qs[j])break;i++;j++}return j>=qs.length*.9?t.slice(i).trim():t};
+ const text=r=>strip((r.transcript||r.liveTranscript||r.note||'').trim(),r.question);
  const sig=r=>text(r).length+':'+text(r).slice(0,40)+':'+r.duration;
  const pending=r=>r.capture!=='text'&&r.sttState==='pending'&&Date.now()-new Date(r.date)<90e3;
  let busy=false,lastOk='',lastErr='',modeAt={};
@@ -7642,6 +7643,26 @@ try{if(typeof render==='function')render()}catch{}})(window);
    3) 저장하면 같은 기록 ID로 선생님 시트에 덮어써서 '(전사 없음)'이 채워짐 */
 (function(root){
  const UA=navigator.userAgent||'';
+
+ /* 0) 연속 문항 전사 안정화: 앞 문항 인식 정리 · 멈춤 감지 시 포기 대신 재연결 · 일시 오류 재시도 */
+ const LS=root.LiveSpeech;
+ if(LS&&!LS.__sf){LS.__sf=1;let cur=null;
+  const oStart=LS.prototype.start,oOpen=LS.prototype.open,oStop=LS.prototype.stop,oCancel=LS.prototype.cancel;
+  LS.prototype.start=function(){const prev=cur;cur=this;
+   if(prev&&prev!==this){try{if(prev.active){prev.active=false;clearTimeout(prev.timer);clearInterval(prev.watch);prev.recognition?.abort()}}catch{}}
+   const go=()=>{if(this._dead)return;oStart.call(this)};
+   if(prev&&prev!==this){this.status='waiting';try{this.emit()}catch{};this._delay=setTimeout(go,400)}else go()};
+  LS.prototype.open=function(){oOpen.call(this);const r=this.recognition;if(!r)return;
+   const oe=r.onerror,orr=r.onresult;
+   r.onresult=e=>{this.restarts=0;orr&&orr(e)};
+   r.onerror=e=>{const er=e&&e.error;if(['network','audio-capture','no-speech','aborted'].includes(er)){this.error=er;this.incomplete=true;this.status='reconnecting';try{this.emit()}catch{};return}oe&&oe(e)}};
+  LS.prototype.check=function(){if(!this.active)return;const now=Date.now(),base=Math.max(this.started||0,this._reopenAt||0);
+   const stuck=(this.voiceAt&&now-(this.lastVoice||this.voiceAt)<2000&&now-Math.max(this.lastResult||0,this.voiceAt,base)>8000)||(!this.lastResult&&now-base>15000);
+   if(stuck){this._reopenAt=now;this.incomplete=true;this.status='reconnecting';try{this.emit()}catch{};try{this.recognition?.abort()}catch{}}
+   else if(!this.lastResult&&now-this.started>5000){this.status='waiting';try{this.emit()}catch{}}};
+  LS.prototype.stop=function(){this._dead=true;clearTimeout(this._delay);return oStop.call(this)};
+  LS.prototype.cancel=function(){this._dead=true;clearTimeout(this._delay);return oCancel.call(this)};
+ }
  const RECS=()=>{try{return state.records||[]}catch{return []}};
  const SR=root.SpeechRecognition||root.webkitSpeechRecognition;
  const inApp=/KAKAOTALK|Instagram|FBAN|FBAV|NAVER\(inapp|Line\/|DaumApps|everytimeApp|BAND\//i.test(UA);
@@ -7672,6 +7693,7 @@ try{if(typeof render==='function')render()}catch{}})(window);
  if(typeof orig==='function'){root.transcribeRecord=async function(id){
   try{if(root.InterviewTransport?.connected?.())return orig(id)}catch{}
   const r=RECS().find(x=>x.id===id);if(!r||r.capture==='text'||r.transcript)return;
+  if((r.liveTranscript||'').trim().length>=10){r.transcript=r.liveTranscript.trim();r.autoTranscript=r.transcript;r.sttState='done';r.sttError='';r.sttModel='browser-speech';try{save()}catch{}try{refreshReport(r)}catch{}try{root.SheetSync?.sync()}catch{}return}
   r.sttState='error';r.sttError='자동 전사가 안 됐어요. 아래에서 다시 말하거나 입력하면 선생님께 전송돼요.';
   try{save()}catch{}try{refreshReport(r)}catch{}setTimeout(scan,50)}}
 
