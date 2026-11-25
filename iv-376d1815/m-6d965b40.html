@@ -6780,8 +6780,13 @@ try{if(typeof render==='function')render()}catch{}})(window);
   return {ok:res.ok&&!data.error,status:res.status,json:async()=>data};
  }
  const orig=T.fetch.bind(T),origConnected=T.connected;
- T.fetch=(path,options)=>path==='/api/evaluate'?evaluate(options||{}):origConnected()?orig(path,options):Promise.reject(Error('답변 전사는 녹화 중 자막으로 자동 저장돼요. 자막이 비었으면 답변 텍스트를 직접 입력해 주세요.'));
- T.connected=()=>true;
+ T.fetch=(path,options)=>path==='/api/evaluate'?evaluate(options||{}):orig(path,options);
+ // 평가할 때만 '연결됨'으로 보이게 한다. 전사는 기존처럼 브라우저 자막 → 없으면 '다시 말하기/입력' 상자로 간다.
+ let evalFlag=false;
+ T.connected=()=>evalFlag||origConnected();
+ const origEval=root.evaluateRecord;
+ if(typeof origEval==='function')root.evaluateRecord=function(id,retry){evalFlag=true;try{return origEval(id,retry)}finally{evalFlag=false}};
+
  // 답변이 저장되고 전사문이 생기면 자동으로 피드백 요청
  const tried=new Set();
  setInterval(()=>{let fn;try{fn=evaluateRecord}catch{return}
